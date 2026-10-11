@@ -82,18 +82,18 @@ Live GitHub Pages URL: **`https://zhsaikot.github.io/healthshark/`**
 
 The project includes an automatic fallback mode, so it works right away even before adding Firebase keys. To enable live cloud Firestore and Firebase Authentication:
 
-### Step 1 & 2: Configured!
-Your Firebase project credentials have been configured in [`assets/js/firebase-config.js`](assets/js/firebase-config.js):
+### Step 1 & 2: Configuration
+Add your Firebase web project credentials in [`assets/js/firebase-config.js`](assets/js/firebase-config.js):
 
 ```javascript
 const firebaseConfig = {
-  apiKey: "AIzaSyBVnn772269zI5QqHKOQCeOFNOVRn_dVz8",
-  authDomain: "health-shark.firebaseapp.com",
-  projectId: "health-shark",
-  storageBucket: "health-shark.firebasestorage.app",
-  messagingSenderId: "282353171783",
-  appId: "1:282353171783:web:3262a90cdffb87e982e062",
-  measurementId: "G-JMV9FF1R1Y"
+  apiKey: "YOUR_FIREBASE_API_KEY",
+  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_PROJECT_ID.firebasestorage.app",
+  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+  appId: "YOUR_APP_ID",
+  measurementId: "YOUR_MEASUREMENT_ID"
 };
 ```
 
