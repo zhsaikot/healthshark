@@ -58,12 +58,13 @@ document.addEventListener("DOMContentLoaded", async () => {
   function renderCategoryNavigators() {
     // Top Pills
     if (topPillsContainer) {
+      const allText = window.hsT ? window.hsT("menu.tab_all") : "All Items";
       let pillsHtml = `
         <button 
           data-category-filter="all" 
           class="cat-pill px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold transition-all flex items-center gap-2 ${currentCategory === 'all' ? 'bg-emerald-800 text-white shadow-md' : 'bg-white text-gray-700 hover:bg-emerald-50 border border-gray-200'}"
         >
-          <i class="fa-solid fa-utensils"></i> All Items
+          <i class="fa-solid fa-utensils"></i> ${allText}
         </button>
       `;
 
@@ -90,10 +91,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Sidebar Links
     if (sidebarContainer) {
+      const allText = window.hsT ? window.hsT("menu.tab_all") : "All Categories";
       let sideHtml = `
         <a href="#" data-sidebar-category="all" class="side-cat-link flex items-center gap-3 px-3 py-2.5 rounded-xl font-semibold transition-colors ${currentCategory === 'all' ? 'bg-emerald-800 text-white' : 'text-gray-700 hover:bg-emerald-50'}">
           <i class="fa-solid fa-border-all text-xs w-5 text-center"></i>
-          <span>All Categories</span>
+          <span>${allText}</span>
         </a>
       `;
 
@@ -179,7 +181,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Category Title Display
     const foundCat = allCategories.find((c) => c.id === currentCategory);
-    const activeName = currentCategory === "all" ? "All Items" : (foundCat ? foundCat.name : "Menu Items");
+    const allTitle = window.hsT ? window.hsT("menu.tab_all") : "All Items";
+    const activeName = currentCategory === "all" ? allTitle : (foundCat ? foundCat.name : "Menu Items");
     if (currentCategoryTitle) currentCategoryTitle.textContent = activeName;
     if (activeFilterInfo) activeFilterInfo.textContent = activeName;
 
@@ -201,17 +204,20 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 
     if (itemsCountBadge) {
-      itemsCountBadge.textContent = `${filtered.length} item${filtered.length === 1 ? "" : "s"}`;
+      const formattedCount = window.hsI18n ? window.hsI18n.formatNumber(filtered.length) : filtered.length;
+      const dishesWord = window.hsT ? window.hsT("menu.dishes") : (filtered.length === 1 ? "item" : "items");
+      itemsCountBadge.textContent = `${formattedCount} ${dishesWord}`;
     }
 
     if (filtered.length === 0) {
+      const noItemsTitle = window.hsT ? window.hsT("menu.no_items") : "No dishes found in this category.";
       menuGrid.innerHTML = `
         <div class="col-span-full py-16 text-center">
           <div class="w-16 h-16 mx-auto mb-4 bg-emerald-50 text-emerald-700 rounded-full flex items-center justify-center text-2xl">
             <i class="fa-solid fa-utensils"></i>
           </div>
-          <h3 class="text-xl font-bold text-gray-800 mb-1">No items found</h3>
-          <p class="text-sm text-gray-500 mb-4">We couldn't find any dishes matching your current selection.</p>
+          <h3 class="text-xl font-bold text-gray-800 mb-1">${noItemsTitle}</h3>
+          <p class="text-sm text-gray-500 mb-4">Try clearing filters or search to view more items.</p>
           <button onclick="document.getElementById('menu-search-input').value=''; window.location.href='menu.html'" class="px-5 py-2.5 bg-emerald-800 text-white rounded-xl text-sm font-medium hover:bg-emerald-900 transition-colors">
             Reset All Filters
           </button>
@@ -224,10 +230,16 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Slice for pagination
     const itemsToDisplay = filtered.slice(0, visibleCount);
 
+    const orderNowText = window.hsT ? window.hsT("card.order_now") : "Order Now";
+    const viewDetailsText = window.hsT ? window.hsT("card.view_details") : "View Details";
+    const priceLabelText = window.hsT ? window.hsT("card.price_label") : "Price";
+
     menuGrid.innerHTML = itemsToDisplay
       .map((item) => {
-        const itemUnit = item.unit || "pc";
-        const waUrl = buildWhatsAppOrderUrl(item.name, item.price, 1, itemUnit);
+        const rawUnit = item.unit || "pc";
+        const itemUnit = window.hsI18n ? window.hsI18n.tUnit(rawUnit) : rawUnit;
+        const displayPrice = window.hsI18n ? window.hsI18n.formatNumber(item.price) : item.price;
+        const waUrl = buildWhatsAppOrderUrl(item.name, item.price, 1, rawUnit);
         return `
           <div class="hs-card bg-white rounded-2xl overflow-hidden border border-gray-100/90 shadow-sm flex flex-col group">
             <!-- Image with Badge -->
@@ -270,9 +282,9 @@ document.addEventListener("DOMContentLoaded", async () => {
               <!-- Price & Actions: Strict button rule (Order Now + View Details, NO Add to Cart) -->
               <div class="mt-4 pt-3 border-t border-gray-100">
                 <div class="flex items-baseline justify-between mb-3">
-                  <span class="text-xs text-gray-400 font-medium">Price</span>
+                  <span class="text-xs text-gray-400 font-medium">${priceLabelText}</span>
                   <div class="text-xl font-extrabold text-emerald-800">
-                    ৳ ${item.price} <span class="text-xs font-semibold text-gray-500 font-sans">/ ${itemUnit}</span>
+                    ৳ ${displayPrice} <span class="text-xs font-semibold text-gray-500 font-sans">/ ${itemUnit}</span>
                   </div>
                 </div>
 
@@ -286,7 +298,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                     title="Order directly via WhatsApp"
                   >
                     <i class="fa-brands fa-whatsapp text-sm"></i>
-                    <span>Order Now</span>
+                    <span>${orderNowText}</span>
                   </a>
 
                   <!-- View Details button -->
@@ -294,7 +306,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                     href="item-details.html?id=${item.id}" 
                     class="w-full inline-flex items-center justify-center gap-1 py-2.5 px-3 rounded-xl bg-gray-100 hover:bg-emerald-50 hover:text-emerald-800 active:scale-[0.98] text-gray-700 text-xs font-semibold border border-transparent hover:border-emerald-200 transition-all duration-200"
                   >
-                    <span>View Details</span>
+                    <span>${viewDetailsText}</span>
                     <i class="fa-solid fa-arrow-right text-[10px]"></i>
                   </a>
                 </div>
@@ -314,4 +326,10 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
     }
   }
+
+  // Real-time language switcher reaction
+  window.addEventListener("hs-language-changed", () => {
+    renderCategoryNavigators();
+    updateUI();
+  });
 });

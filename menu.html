@@ -48,15 +48,15 @@
   <div class="bg-brand-900 text-brand-100 text-xs py-2 px-4 text-center font-medium">
     <div class="max-w-7xl mx-auto flex items-center justify-between flex-wrap gap-2">
       <div class="flex items-center gap-2 mx-auto sm:mx-0">
-        <span class="bg-brand-700 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">Free Delivery</span>
-        <span>Orders within Dhaka (Free delivery in Mirpur area)</span>
+        <span class="bg-brand-700 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider" data-i18n="topbar.free_badge">Free Delivery</span>
+        <span data-i18n="topbar.free_delivery">Orders within Dhaka (Free delivery in Mirpur area)</span>
       </div>
       <div class="hidden sm:flex items-center gap-4 text-brand-200">
         <a href="tel:+8801789474381" class="hover:text-white transition-colors flex items-center gap-1.5">
           <i class="fa-solid fa-phone text-[11px]"></i> 01789-474381
         </a>
         <span>•</span>
-        <span class="flex items-center gap-1.5"><i class="fa-solid fa-clock text-[11px]"></i> 24/7 Always Open</span>
+        <span class="flex items-center gap-1.5"><i class="fa-solid fa-clock text-[11px]"></i> <span data-i18n="topbar.always_open">24/7 Always Open</span></span>
       </div>
     </div>
   </div>
@@ -76,14 +76,34 @@
 
         <!-- Desktop Navigation Links -->
         <nav class="hidden md:flex items-center space-x-8 font-semibold text-sm">
-          <a href="index.html" class="text-gray-600 hover:text-brand-800 transition-colors">Home</a>
-          <a href="menu.html" class="text-brand-800 border-b-2 border-brand-700 pb-1 font-bold">Food Menu</a>
-          <a href="about.html" class="text-gray-600 hover:text-brand-800 transition-colors">About</a>
-          <a href="contact.html" class="text-gray-600 hover:text-brand-800 transition-colors">Contact</a>
+          <a href="index.html" class="text-gray-600 hover:text-brand-800 transition-colors" data-i18n="nav.home">Home</a>
+          <a href="menu.html" class="text-brand-800 border-b-2 border-brand-700 pb-1 font-bold" data-i18n="nav.menu">Food Menu</a>
+          <a href="about.html" class="text-gray-600 hover:text-brand-800 transition-colors" data-i18n="nav.about">About</a>
+          <a href="contact.html" class="text-gray-600 hover:text-brand-800 transition-colors" data-i18n="nav.contact">Contact</a>
         </nav>
 
         <!-- Right Action Icons & Buttons -->
-        <div class="flex items-center space-x-3">
+        <div class="flex items-center space-x-2 sm:space-x-3">
+          <!-- Language Switcher (EN | বাংলা) -->
+          <div class="lang-switcher-container inline-flex items-center bg-gray-100 p-0.5 rounded-full border border-gray-200 text-xs font-bold shadow-inner" title="Switch Language / ভাষা পরিবর্তন">
+            <button 
+              type="button" 
+              class="lang-btn px-2.5 py-1 rounded-full text-xs font-bold transition-all bg-brand-700 text-white shadow-sm" 
+              data-lang="en"
+              title="English"
+            >
+              EN
+            </button>
+            <button 
+              type="button" 
+              class="lang-btn px-2.5 py-1 rounded-full text-xs font-bold transition-all text-gray-600 hover:text-brand-900" 
+              data-lang="bn"
+              title="বাংলা"
+            >
+              বাংলা
+            </button>
+          </div>
+
           <button 
             type="button" 
             data-open-search 
@@ -100,7 +120,7 @@
             class="hidden sm:inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-brand-700 hover:bg-brand-800 text-white text-xs font-bold shadow-md shadow-brand-700/20 active:scale-95 transition-all"
           >
             <i class="fa-brands fa-whatsapp text-sm"></i>
-            <span>Order on WhatsApp</span>
+            <span data-i18n="nav.order_whatsapp">Order on WhatsApp</span>
           </a>
 
           <button 
@@ -117,10 +137,23 @@
 
     <!-- Mobile Drawer -->
     <div id="mobile-menu" class="hidden md:hidden border-t border-gray-100 bg-white px-4 pt-3 pb-6 space-y-3 shadow-lg">
-      <a href="index.html" class="block py-2 text-gray-600 font-medium hover:text-brand-800 pl-3">Home</a>
-      <a href="menu.html" class="block py-2 text-brand-800 font-bold border-l-4 border-brand-700 pl-3">Food Menu</a>
-      <a href="about.html" class="block py-2 text-gray-600 font-medium hover:text-brand-800 pl-3">About Us</a>
-      <a href="contact.html" class="block py-2 text-gray-600 font-medium hover:text-brand-800 pl-3">Contact & Location</a>
+      <a href="index.html" class="block py-2 text-gray-600 font-medium hover:text-brand-800 pl-3" data-i18n="nav.home">Home</a>
+      <a href="menu.html" class="block py-2 text-brand-800 font-bold border-l-4 border-brand-700 pl-3" data-i18n="nav.menu">Food Menu</a>
+      <a href="about.html" class="block py-2 text-gray-600 font-medium hover:text-brand-800 pl-3" data-i18n="nav.about">About Us</a>
+      <a href="contact.html" class="block py-2 text-gray-600 font-medium hover:text-brand-800 pl-3" data-i18n="nav.contact">Contact & Location</a>
+      
+      <!-- Mobile Language Switcher Row -->
+      <div class="flex items-center justify-between py-2 px-3 bg-gray-50 rounded-xl border border-gray-200">
+        <span class="text-xs font-bold text-gray-700 flex items-center gap-1.5">
+          <i class="fa-solid fa-globe text-brand-700"></i>
+          <span data-i18n="nav.lang_label">Language / ভাষা</span>
+        </span>
+        <div class="lang-switcher-container inline-flex items-center bg-white p-0.5 rounded-full border border-gray-200 text-xs font-bold">
+          <button type="button" class="lang-btn px-2.5 py-1 rounded-full transition-all" data-lang="en">EN</button>
+          <button type="button" class="lang-btn px-2.5 py-1 rounded-full transition-all" data-lang="bn">বাংলা</button>
+        </div>
+      </div>
+
       <div class="pt-3 border-t border-gray-100 flex flex-col gap-2">
         <a 
           href="https://wa.me/8801789474381" 
@@ -128,8 +161,9 @@
           rel="noopener" 
           class="w-full text-center py-2.5 bg-brand-700 text-white rounded-xl font-bold text-sm flex items-center justify-center gap-2"
         >
-          <i class="fa-brands fa-whatsapp text-base"></i> Order via WhatsApp (+8801789474381)
+          <i class="fa-brands fa-whatsapp text-base"></i> <span data-i18n="nav.order_whatsapp">Order via WhatsApp</span> (+8801789474381)
         </a>
+        <a href="admin.html" class="w-full text-center py-2 text-gray-500 hover:text-gray-800 text-xs" data-i18n="nav.admin">Admin Dashboard</a>
       </div>
     </div>
   </header>
@@ -144,8 +178,8 @@
       />
     </div>
     <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-      <h1 class="font-heading text-4xl sm:text-5xl font-extrabold tracking-tight">Our Food Menu</h1>
-      <p class="mt-3 text-base sm:text-lg text-brand-100 max-w-2xl mx-auto font-light leading-relaxed">
+      <h1 class="font-heading text-4xl sm:text-5xl font-extrabold tracking-tight" data-i18n="menu.hero_title">Our Food Menu</h1>
+      <p class="mt-3 text-base sm:text-lg text-brand-100 max-w-2xl mx-auto font-light leading-relaxed" data-i18n="menu.hero_sub">
         Fresh, healthy and delicious — explore our wide range of homemade meals, snacks, desserts and specialty items.
       </p>
     </div>
@@ -278,6 +312,7 @@
               type="text" 
               id="menu-search-input" 
               placeholder="Search dishes..." 
+              data-i18n-placeholder="menu.search_placeholder"
               class="w-full pl-9 pr-4 py-2 bg-gray-50 hover:bg-gray-100/80 focus:bg-white rounded-xl text-xs sm:text-sm border border-gray-200 focus:border-brand-600 outline-none transition-all"
             />
           </div>
@@ -353,20 +388,20 @@
             <img src="assets/images/logo.png" alt="Health Shark Logo" class="h-14 w-auto object-contain brightness-110" />
             <div>
               <span class="font-heading font-extrabold text-2xl text-white block">Health Shark</span>
-              <span class="font-handwriting text-xl text-emerald-400 block -mt-1">Health is wealth</span>
+              <span class="font-handwriting text-xl text-emerald-400 block -mt-1" data-i18n="footer.motto">Health is wealth</span>
             </div>
           </div>
-          <p class="text-xs text-brand-200/90 leading-relaxed max-w-sm pt-2">
+          <p class="text-xs text-brand-200/90 leading-relaxed max-w-sm pt-2" data-i18n="footer.quote">
             "To build immunity people need the right food in right amount. As a nutritionist I believe to serve people the secure and safe foods with the most dedicated team."
           </p>
         </div>
 
         <div class="md:col-span-5 space-y-3 text-sm">
-          <h4 class="font-heading font-bold text-white text-base tracking-wide">Contact Details</h4>
+          <h4 class="font-heading font-bold text-white text-base tracking-wide" data-i18n="footer.contact_title">Contact Details</h4>
           <ul class="space-y-2.5 text-xs text-brand-200">
             <li class="flex items-start gap-2.5">
               <i class="fa-solid fa-location-dot text-emerald-400 mt-0.5 text-sm shrink-0"></i>
-              <span>House-14, Road-22, Block C, Dhaka, Bangladesh, 1216</span>
+              <span data-i18n="footer.address">House-14, Road-22, Block C, Dhaka, Bangladesh, 1216</span>
             </li>
             <li class="flex items-center gap-2.5">
               <i class="fa-solid fa-phone text-emerald-400 text-sm shrink-0"></i>
@@ -378,14 +413,14 @@
             </li>
             <li class="flex items-center gap-2.5">
               <i class="fa-solid fa-clock text-emerald-400 text-sm shrink-0"></i>
-              <span>Operating Hours: Always open (24/7 Service)</span>
+              <span data-i18n="footer.hours">Operating Hours: Always open (24/7 Service)</span>
             </li>
           </ul>
         </div>
 
         <div class="md:col-span-3 space-y-3">
-          <h4 class="font-heading font-bold text-white text-base tracking-wide">Follow Us</h4>
-          <p class="text-xs text-brand-200">Stay connected for daily menu updates and healthy nutrition tips.</p>
+          <h4 class="font-heading font-bold text-white text-base tracking-wide" data-i18n="footer.follow_title">Follow Us</h4>
+          <p class="text-xs text-brand-200" data-i18n="footer.follow_sub">Stay connected for daily menu updates and healthy nutrition tips.</p>
           <a 
             href="https://www.facebook.com/healthsharkbd" 
             target="_blank" 
@@ -397,13 +432,13 @@
             </div>
             <div>
               <div class="text-xs font-bold leading-tight">facebook.com/healthsharkbd</div>
-              <div class="text-[11px] text-emerald-300 font-semibold">6.3K+ Followers</div>
+              <div class="text-[11px] text-emerald-300 font-semibold" data-i18n="footer.followers">6.3K+ Followers</div>
             </div>
           </a>
 
           <div class="pt-2">
             <a href="admin.html" class="inline-flex items-center gap-1.5 text-xs text-brand-300/80 hover:text-white transition-colors">
-              <i class="fa-solid fa-lock text-[10px]"></i> Admin Management Portal
+              <i class="fa-solid fa-lock text-[10px]"></i> <span data-i18n="footer.admin_link">Admin Management Portal</span>
             </a>
           </div>
         </div>
@@ -411,11 +446,11 @@
       </div>
 
       <div class="pt-6 flex flex-col sm:flex-row items-center justify-between text-xs text-brand-300/80 gap-3">
-        <p>© 2026 Health Shark. All rights reserved.</p>
+        <p>© 2026 Health Shark. <span data-i18n="footer.rights_reserved">All rights reserved.</span></p>
         <p class="text-brand-300/80">
-          Design & Developed by <a href="https://mdziaulhasan.com/" target="_blank" rel="noopener noreferrer" class="text-emerald-400 hover:text-white font-semibold underline decoration-emerald-500/50 hover:decoration-white transition-colors">MD. Ziaul Hasan</a>
+          <span data-i18n="footer.dev_credit">Design & Developed by</span> <a href="https://mdziaulhasan.com/" target="_blank" rel="noopener noreferrer" class="text-emerald-400 hover:text-white font-semibold underline decoration-emerald-500/50 hover:decoration-white transition-colors">MD. Ziaul Hasan</a>
         </p>
-        <p class="font-medium text-emerald-400">Healthy Food • Happy Life</p>
+        <p class="font-medium text-emerald-400" data-i18n="footer.tagline">Healthy Food • Happy Life</p>
       </div>
 
     </div>
@@ -441,6 +476,7 @@
           type="text" 
           id="global-search-input" 
           placeholder="Search momos, samosa, biriani, brownies, noodles..." 
+          data-i18n-placeholder="nav.search_placeholder"
           class="w-full text-base font-medium text-gray-800 outline-none bg-transparent"
         />
         <button id="search-close-btn" class="p-2 text-gray-400 hover:text-gray-700 rounded-lg">
@@ -461,6 +497,7 @@
   <script src="assets/js/seed-data.js"></script>
   <script src="assets/js/firebase-config.js"></script>
   <script src="assets/js/db.js"></script>
+  <script src="assets/js/i18n.js"></script>
   <script src="assets/js/main.js"></script>
   <script src="assets/js/menu.js"></script>
 </body>

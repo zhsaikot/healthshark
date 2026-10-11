@@ -51,7 +51,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   function renderItemDetails(item) {
     document.title = `${item.name} - Health Shark`;
-    const itemUnit = item.unit || "pc";
+    const rawUnit = item.unit || "pc";
+    const itemUnit = window.hsI18n ? window.hsI18n.tUnit(rawUnit) : rawUnit;
+    const formattedPrice = window.hsI18n ? window.hsI18n.formatNumber(item.price) : item.price;
 
     // Breadcrumbs & Top Banner
     if (breadcrumbCategory) {
@@ -61,20 +63,25 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (breadcrumbItem) breadcrumbItem.textContent = item.name;
     if (bannerTitle) bannerTitle.textContent = item.name;
     if (bannerCategory) bannerCategory.textContent = item.categoryName || item.category;
-    if (bannerPrice) bannerPrice.innerHTML = `৳ ${item.price} <span class="text-sm font-normal text-brand-300">/ ${itemUnit}</span>`;
+    if (bannerPrice) bannerPrice.innerHTML = `৳ ${formattedPrice} <span class="text-sm font-normal text-brand-300">/ ${itemUnit}</span>`;
 
     // Item Details
     if (itemTitle) itemTitle.textContent = item.name;
     if (itemCategoryBadge) itemCategoryBadge.textContent = item.categoryName || item.category;
     if (itemPrice) {
-      itemPrice.innerHTML = `৳ ${item.price} <span class="text-sm font-semibold text-gray-500 font-sans">/ ${itemUnit}</span>`;
+      itemPrice.innerHTML = `৳ ${formattedPrice} <span class="text-sm font-semibold text-gray-500 font-sans">/ ${itemUnit}</span>`;
     }
     if (itemRating) itemRating.textContent = item.rating || "4.9";
-    if (itemReviewsCount) itemReviewsCount.textContent = `(${item.reviewsCount || 45} customer reviews)`;
+    if (itemReviewsCount) {
+      const revNum = window.hsI18n ? window.hsI18n.formatNumber(item.reviewsCount || 45) : (item.reviewsCount || 45);
+      const revText = window.hsT ? window.hsT("details.reviews_label") : "customer reviews";
+      itemReviewsCount.textContent = `(${revNum} ${revText})`;
+    }
     if (itemDescription) itemDescription.textContent = item.description;
 
     if (qtyLabel) {
-      qtyLabel.textContent = `Select Quantity (${itemUnit})`;
+      const qText = window.hsT ? window.hsT("details.qty_label") : "Select Quantity";
+      qtyLabel.textContent = `${qText} (${itemUnit})`;
     }
 
     // Main image
@@ -194,14 +201,17 @@ document.addEventListener("DOMContentLoaded", async () => {
   function updatePriceAndWhatsAppUrl() {
     if (!currentItem) return;
     const total = currentItem.price * currentQuantity;
-    const itemUnit = currentItem.unit || "pc";
+    const rawUnit = currentItem.unit || "pc";
+    const itemUnit = window.hsI18n ? window.hsI18n.tUnit(rawUnit) : rawUnit;
+    const formattedTotal = window.hsI18n ? window.hsI18n.formatNumber(total) : total;
+    const formattedQty = window.hsI18n ? window.hsI18n.formatNumber(currentQuantity) : currentQuantity;
 
     if (totalPriceDisplay) {
-      totalPriceDisplay.innerHTML = `৳ ${total} <span class="text-xs font-semibold text-gray-400 font-sans">(${currentQuantity} ${itemUnit})</span>`;
+      totalPriceDisplay.innerHTML = `৳ ${formattedTotal} <span class="text-xs font-semibold text-gray-400 font-sans">(${formattedQty} ${itemUnit})</span>`;
     }
 
     if (orderWhatsAppBtn) {
-      const waUrl = buildWhatsAppOrderUrl(currentItem.name, currentItem.price, currentQuantity, itemUnit);
+      const waUrl = buildWhatsAppOrderUrl(currentItem.name, currentItem.price, currentQuantity, rawUnit);
       orderWhatsAppBtn.href = waUrl;
     }
   }
@@ -217,16 +227,21 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
     const showcase = related.slice(0, 4);
 
+    const orderText = window.hsT ? window.hsT("card.order_now") : "Order";
+    const detailsText = window.hsT ? window.hsT("card.view_details") : "Details";
+
     recommendationsGrid.innerHTML = showcase
       .map((item) => {
-        const itemUnit = item.unit || "pc";
-        const waUrl = buildWhatsAppOrderUrl(item.name, item.price, 1, itemUnit);
+        const rawUnit = item.unit || "pc";
+        const itemUnit = window.hsI18n ? window.hsI18n.tUnit(rawUnit) : rawUnit;
+        const displayPrice = window.hsI18n ? window.hsI18n.formatNumber(item.price) : item.price;
+        const waUrl = buildWhatsAppOrderUrl(item.name, item.price, 1, rawUnit);
         return `
           <div class="hs-card bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm flex flex-col group">
             <a href="item-details.html?id=${item.id}" class="block h-44 w-full img-zoom-container bg-gray-100 relative">
               <img src="${item.image}" alt="${item.name}" class="w-full h-full object-cover" loading="lazy" onerror="this.src='assets/images/logo.png'">
               <span class="absolute top-2 right-2 bg-white/90 backdrop-blur-md px-2 py-0.5 rounded-md text-[11px] font-bold text-gray-800 shadow-sm">
-                ৳ ${item.price} <span class="text-[9px] font-normal text-gray-500">/ ${itemUnit}</span>
+                ৳ ${displayPrice} <span class="text-[9px] font-normal text-gray-500">/ ${itemUnit}</span>
               </span>
             </a>
             <div class="p-4 flex-1 flex flex-col justify-between">
@@ -234,16 +249,16 @@ document.addEventListener("DOMContentLoaded", async () => {
                 <span class="text-[10px] font-bold uppercase text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">
                   ${item.categoryName || item.category}
                 </span>
-                <h4 class="font-heading font-bold text-sm text-gray-900 mt-1 line-clamp-1 group-hover:text-emerald-700 transition-colors">
+                <h4 class="font-heading text-sm font-bold text-gray-900 mt-1 line-clamp-1 group-hover:text-emerald-700 transition-colors">
                   <a href="item-details.html?id=${item.id}">${item.name}</a>
                 </h4>
               </div>
               <div class="grid grid-cols-2 gap-1.5 mt-3 pt-2 border-t border-gray-100">
                 <a href="${waUrl}" target="_blank" rel="noopener" class="py-1.5 px-2 bg-emerald-700 hover:bg-emerald-800 text-white text-[11px] font-bold rounded-lg flex items-center justify-center gap-1 shadow-sm">
-                  <i class="fa-brands fa-whatsapp text-xs"></i> Order
+                  <i class="fa-brands fa-whatsapp text-xs"></i> ${orderText}
                 </a>
                 <a href="item-details.html?id=${item.id}" class="py-1.5 px-2 bg-gray-100 hover:bg-emerald-50 hover:text-emerald-800 text-gray-700 text-[11px] font-medium rounded-lg text-center">
-                  Details
+                  ${detailsText}
                 </a>
               </div>
             </div>
@@ -252,4 +267,12 @@ document.addEventListener("DOMContentLoaded", async () => {
       })
       .join("");
   }
+
+  // React to language changes
+  window.addEventListener("hs-language-changed", () => {
+    if (currentItem) {
+      renderItemDetails(currentItem);
+      renderRecommendations(currentItem);
+    }
+  });
 });

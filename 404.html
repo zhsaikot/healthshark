@@ -36,33 +36,42 @@
 <body class="bg-[#fafbf9] text-gray-800 antialiased flex flex-col min-h-screen items-center justify-center p-6 text-center">
 
   <div class="max-w-md w-full bg-white rounded-3xl p-8 border border-gray-100 shadow-xl space-y-6">
+    <div class="flex justify-end -mt-2 -mr-2 mb-2">
+      <!-- Language Switcher Pill -->
+      <div class="lang-switcher-container inline-flex items-center bg-gray-100 p-0.5 rounded-full border border-gray-200 text-xs font-bold shadow-inner" title="Switch Language / ভাষা পরিবর্তন">
+        <button type="button" class="lang-btn px-2.5 py-1 rounded-full text-xs font-bold transition-all bg-brand-700 text-white shadow-sm cursor-default" data-lang="en">EN</button>
+        <button type="button" class="lang-btn px-2.5 py-1 rounded-full text-xs font-bold transition-all text-gray-600 hover:text-brand-900 cursor-pointer" data-lang="bn">বাংলা</button>
+      </div>
+    </div>
+
     <a href="index.html" class="inline-block">
       <img src="assets/images/logo.png" alt="Health Shark Logo" class="h-20 w-auto mx-auto object-contain" />
     </a>
 
     <div class="space-y-2">
       <span class="text-6xl font-black text-brand-800 font-heading">404</span>
-      <h1 class="text-2xl font-extrabold text-gray-900 font-heading">Page Not Found</h1>
-      <p class="text-sm text-gray-500 leading-relaxed">
+      <h1 class="text-2xl font-extrabold text-gray-900 font-heading" data-i18n="notfound.title">Page Not Found</h1>
+      <p class="text-sm text-gray-500 leading-relaxed" data-i18n="notfound.desc">
         The healthy treat or page you are looking for doesn't exist or has moved.
       </p>
     </div>
 
     <div class="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
-      <a href="index.html" class="w-full sm:w-auto px-6 py-3 rounded-xl bg-brand-800 hover:bg-brand-900 text-white font-bold text-xs uppercase tracking-wider shadow-md transition-all">
+      <a href="index.html" class="w-full sm:w-auto px-6 py-3 rounded-xl bg-brand-800 hover:bg-brand-900 text-white font-bold text-xs uppercase tracking-wider shadow-md transition-all" data-i18n="notfound.back_home">
         Back to Home
       </a>
-      <a href="menu.html" class="w-full sm:w-auto px-6 py-3 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-brand-800 font-bold text-xs uppercase tracking-wider transition-all">
+      <a href="menu.html" class="w-full sm:w-auto px-6 py-3 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-brand-800 font-bold text-xs uppercase tracking-wider transition-all" data-i18n="notfound.view_menu">
         View Menu
       </a>
     </div>
   </div>
 
   <div class="mt-8 text-xs text-gray-400 text-center space-y-1">
-    <p>© 2026 Health Shark. All rights reserved.</p>
-    <p>Design & Developed by <a href="https://mdziaulhasan.com/" target="_blank" rel="noopener noreferrer" class="text-emerald-600 hover:underline font-semibold">MD. Ziaul Hasan</a></p>
+    <p>© 2026 Health Shark. <span data-i18n="footer.rights_reserved">All rights reserved.</span></p>
+    <p><span data-i18n="footer.dev_credit">Design & Developed by</span> <a href="https://mdziaulhasan.com/" target="_blank" rel="noopener noreferrer" class="text-emerald-600 hover:underline font-semibold">MD. Ziaul Hasan</a></p>
   </div>
 
+  <script src="assets/js/i18n.js"></script>
 </body>
 </html>
 

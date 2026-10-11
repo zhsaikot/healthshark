@@ -50,20 +50,26 @@
           <img src="assets/images/logo.png" alt="Health Shark Logo" class="h-9 w-auto brightness-110" />
           <span class="font-heading font-extrabold text-lg text-white tracking-tight">Health Shark</span>
         </a>
-        <span class="text-xs px-2.5 py-0.5 rounded-full bg-brand-800 text-brand-200 font-bold uppercase tracking-wider">
+        <span class="text-xs px-2.5 py-0.5 rounded-full bg-brand-800 text-brand-200 font-bold uppercase tracking-wider" data-i18n="admin.portal">
           Admin Portal
         </span>
       </div>
 
-      <div class="flex items-center gap-4">
+      <div class="flex items-center gap-3 sm:gap-4">
         <!-- Live status badge -->
         <div id="firebase-status-badge">
           <!-- Filled dynamically by admin.js -->
         </div>
 
+        <!-- Language Switcher Pill -->
+        <div class="lang-switcher-container inline-flex items-center bg-gray-100 p-0.5 rounded-full border border-gray-200 text-xs font-bold shadow-inner" title="Switch Language / ভাষা পরিবর্তন">
+          <button type="button" class="lang-btn px-2.5 py-1 rounded-full text-xs font-bold transition-all bg-brand-700 text-white shadow-sm cursor-default" data-lang="en">EN</button>
+          <button type="button" class="lang-btn px-2.5 py-1 rounded-full text-xs font-bold transition-all text-gray-600 hover:text-brand-900 cursor-pointer" data-lang="bn">বাংলা</button>
+        </div>
+
         <a href="index.html" class="text-xs text-brand-200 hover:text-white flex items-center gap-1.5 transition-colors">
           <i class="fa-solid fa-store"></i>
-          <span class="hidden sm:inline">View Public Store</span>
+          <span class="hidden sm:inline" data-i18n="admin.view_store">View Public Store</span>
         </a>
       </div>
     </div>
@@ -76,8 +82,8 @@
         <div class="w-16 h-16 mx-auto bg-brand-50 rounded-2xl flex items-center justify-center text-brand-800 text-2xl shadow-inner border border-brand-100">
           <i class="fa-solid fa-lock"></i>
         </div>
-        <h2 class="font-heading text-2xl font-extrabold text-gray-900">Admin Sign In</h2>
-        <p class="text-xs text-gray-500">Sign in to manage dishes, categories and prices</p>
+        <h2 class="font-heading text-2xl font-extrabold text-gray-900" data-i18n="admin.sign_in">Admin Sign In</h2>
+        <p class="text-xs text-gray-500" data-i18n="admin.sign_in_sub">Sign in to manage dishes, categories and prices</p>
       </div>
 
       <!-- Error box -->
@@ -86,7 +92,7 @@
       <!-- Login Form -->
       <form id="login-form" class="space-y-4">
         <div>
-          <label for="login-email" class="block text-xs font-bold uppercase tracking-wider text-gray-600 mb-1">
+          <label for="login-email" class="block text-xs font-bold uppercase tracking-wider text-gray-600 mb-1" data-i18n="admin.email">
             Email Address
           </label>
           <input 
@@ -99,7 +105,7 @@
         </div>
 
         <div>
-          <label for="login-password" class="block text-xs font-bold uppercase tracking-wider text-gray-600 mb-1">
+          <label for="login-password" class="block text-xs font-bold uppercase tracking-wider text-gray-600 mb-1" data-i18n="admin.password">
             Password
           </label>
           <input 
@@ -114,8 +120,9 @@
         <button 
           type="submit" 
           class="w-full py-3 px-4 bg-brand-800 hover:bg-brand-900 active:scale-95 text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-md transition-all"
+          data-i18n="admin.btn_login"
         >
-          Sign In
+          Sign In to Dashboard
         </button>
       </form>
 
@@ -705,6 +712,7 @@
   <script src="assets/js/seed-data.js"></script>
   <script src="assets/js/firebase-config.js"></script>
   <script src="assets/js/db.js"></script>
+  <script src="assets/js/i18n.js"></script>
   <script src="assets/js/main.js"></script>
   <script src="assets/js/admin.js"></script>
 </body>
