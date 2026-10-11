@@ -275,11 +275,11 @@
         <p class="text-sm sm:text-base text-gray-500 mt-2">From fresh snacks to hearty meals — we have something nutritious for everyone.</p>
       </div>
 
-      <!-- Categories Grid (Dynamic from Firestore / Seed) -->
-      <div id="popular-categories-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- Categories Grid (Responsive: Horizontal Snap Carousel on Mobile, Grid on Desktop) -->
+      <div id="popular-categories-grid" class="flex gap-4 overflow-x-auto no-scrollbar snap-container pb-4 pt-1 sm:grid sm:grid-cols-2 lg:grid-cols-3 sm:gap-6 sm:overflow-visible">
         
         <!-- Card 1: Snacks & Special Bites -->
-        <a href="menu.html?cat=snacks" class="hs-card group bg-[#fbfbf9] rounded-2xl p-4 border border-gray-100 flex flex-col justify-between overflow-hidden">
+        <a href="menu.html?cat=snacks" class="hs-card group bg-[#fbfbf9] rounded-2xl p-4 border border-gray-100 flex flex-col justify-between overflow-hidden w-[78vw] sm:w-auto shrink-0 snap-card">
           <div class="h-48 rounded-xl overflow-hidden mb-4 bg-gray-100 relative">
             <img 
               src="https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=700&q=80" 
@@ -302,7 +302,7 @@
         </a>
 
         <!-- Card 2: Burgers & Sandwiches -->
-        <a href="menu.html?cat=burgers" class="hs-card group bg-[#fbfbf9] rounded-2xl p-4 border border-gray-100 flex flex-col justify-between overflow-hidden">
+        <a href="menu.html?cat=burgers" class="hs-card group bg-[#fbfbf9] rounded-2xl p-4 border border-gray-100 flex flex-col justify-between overflow-hidden w-[78vw] sm:w-auto shrink-0 snap-card">
           <div class="h-48 rounded-xl overflow-hidden mb-4 bg-gray-100 relative">
             <img 
               src="https://images.unsplash.com/photo-1572802419224-296b0aeee0d9?auto=format&fit=crop&w=700&q=80" 
@@ -325,7 +325,7 @@
         </a>
 
         <!-- Card 3: Noodles & Pasta -->
-        <a href="menu.html?cat=noodles" class="hs-card group bg-[#fbfbf9] rounded-2xl p-4 border border-gray-100 flex flex-col justify-between overflow-hidden">
+        <a href="menu.html?cat=noodles" class="hs-card group bg-[#fbfbf9] rounded-2xl p-4 border border-gray-100 flex flex-col justify-between overflow-hidden w-[78vw] sm:w-auto shrink-0 snap-card">
           <div class="h-48 rounded-xl overflow-hidden mb-4 bg-gray-100 relative">
             <img 
               src="https://images.unsplash.com/photo-1585032226651-759b368d7246?auto=format&fit=crop&w=700&q=80" 
@@ -348,7 +348,7 @@
         </a>
 
         <!-- Card 4: Pre-Order Meals & Combos -->
-        <a href="menu.html?cat=meals" class="hs-card group bg-[#fbfbf9] rounded-2xl p-4 border border-gray-100 flex flex-col justify-between overflow-hidden">
+        <a href="menu.html?cat=meals" class="hs-card group bg-[#fbfbf9] rounded-2xl p-4 border border-gray-100 flex flex-col justify-between overflow-hidden w-[78vw] sm:w-auto shrink-0 snap-card">
           <div class="h-48 rounded-xl overflow-hidden mb-4 bg-gray-100 relative">
             <img 
               src="https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=700&q=80" 
@@ -371,7 +371,7 @@
         </a>
 
         <!-- Card 5: Baked Goods & Desserts -->
-        <a href="menu.html?cat=desserts" class="hs-card group bg-[#fbfbf9] rounded-2xl p-4 border border-gray-100 flex flex-col justify-between overflow-hidden">
+        <a href="menu.html?cat=desserts" class="hs-card group bg-[#fbfbf9] rounded-2xl p-4 border border-gray-100 flex flex-col justify-between overflow-hidden w-[78vw] sm:w-auto shrink-0 snap-card">
           <div class="h-48 rounded-xl overflow-hidden mb-4 bg-gray-100 relative">
             <img 
               src="https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=700&q=80" 
@@ -394,7 +394,7 @@
         </a>
 
         <!-- Card 6: Raw & Specialty Ingredients -->
-        <a href="menu.html?cat=ingredients" class="hs-card group bg-[#fbfbf9] rounded-2xl p-4 border border-gray-100 flex flex-col justify-between overflow-hidden">
+        <a href="menu.html?cat=ingredients" class="hs-card group bg-[#fbfbf9] rounded-2xl p-4 border border-gray-100 flex flex-col justify-between overflow-hidden w-[78vw] sm:w-auto shrink-0 snap-card">
           <div class="h-48 rounded-xl overflow-hidden mb-4 bg-gray-100 relative">
             <img 
               src="https://images.unsplash.com/photo-1559181567-c3190ca9959b?auto=format&fit=crop&w=700&q=80" 
@@ -417,6 +417,77 @@
         </a>
 
       </div>
+
+      <!-- Mobile Swipe Hint -->
+      <div class="sm:hidden flex items-center justify-center gap-1.5 pt-3 text-xs text-brand-700 font-medium">
+        <i class="fa-solid fa-arrows-left-right text-[11px]"></i>
+        <span>Swipe sideways to explore all categories</span>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ==================== BEST SELLER ITEMS CAROUSEL ==================== -->
+  <section class="py-14 sm:py-16 bg-[#fafbf9] border-b border-gray-100">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <!-- Section Header with Arrows -->
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
+        <div>
+          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-900 border border-amber-200">
+            <i class="fa-solid fa-crown text-amber-600 text-xs"></i> Top Rated & Loved
+          </span>
+          <h2 class="font-heading text-2xl sm:text-3xl lg:text-4xl font-extrabold text-brand-950 mt-2">
+            Best Seller Items
+          </h2>
+          <p class="text-xs sm:text-sm text-gray-500 mt-1 max-w-xl">
+            Customer favorites made fresh daily with 100% natural ingredients and balanced nutrition.
+          </p>
+        </div>
+
+        <!-- Controls & Link -->
+        <div class="flex items-center gap-3 self-end sm:self-auto">
+          <a href="menu.html" class="hidden sm:inline-flex items-center gap-1.5 text-xs font-bold text-brand-700 hover:text-brand-900 transition-colors mr-2">
+            <span>View All Menu</span>
+            <i class="fa-solid fa-arrow-right text-[10px]"></i>
+          </a>
+          <button 
+            type="button" 
+            id="bestseller-prev-btn" 
+            class="carousel-nav-btn w-10 h-10 rounded-full bg-white hover:bg-brand-50 text-gray-700 hover:text-brand-800 border border-gray-200 shadow-sm flex items-center justify-center cursor-pointer active:scale-90"
+            aria-label="Previous Best Seller"
+          >
+            <i class="fa-solid fa-chevron-left text-sm"></i>
+          </button>
+          <button 
+            type="button" 
+            id="bestseller-next-btn" 
+            class="carousel-nav-btn w-10 h-10 rounded-full bg-brand-700 hover:bg-brand-800 text-white shadow-md shadow-brand-700/20 flex items-center justify-center cursor-pointer active:scale-90"
+            aria-label="Next Best Seller"
+          >
+            <i class="fa-solid fa-chevron-right text-sm"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Carousel Track -->
+      <div 
+        id="bestseller-carousel-track" 
+        class="flex gap-5 overflow-x-auto no-scrollbar snap-container py-3 px-1 scroll-smooth"
+      >
+        <!-- Dynamic content loaded via JS -->
+        <div class="py-12 text-center text-gray-400 w-full flex items-center justify-center gap-2">
+          <i class="fa-solid fa-circle-notch fa-spin text-brand-700"></i>
+          <span>Loading best sellers...</span>
+        </div>
+      </div>
+
+      <!-- Mobile Hint -->
+      <div class="sm:hidden flex items-center justify-center gap-1.5 pt-3 text-xs text-gray-500">
+        <i class="fa-solid fa-arrows-left-right text-[11px] text-brand-600"></i>
+        <span>Swipe horizontally to browse items</span>
+      </div>
+
     </div>
   </section>
 
@@ -460,6 +531,70 @@
 
         </div>
       </div>
+    </div>
+  </section>
+
+  <!-- ==================== POPULAR ITEMS CAROUSEL ==================== -->
+  <section class="py-14 sm:py-16 bg-white border-b border-gray-100">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <!-- Section Header with Arrows -->
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
+        <div>
+          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-900 border border-emerald-200">
+            <i class="fa-solid fa-fire text-emerald-600 text-xs"></i> Trending Nutrition
+          </span>
+          <h2 class="font-heading text-2xl sm:text-3xl lg:text-4xl font-extrabold text-brand-950 mt-2">
+            Popular Items
+          </h2>
+          <p class="text-xs sm:text-sm text-gray-500 mt-1 max-w-xl">
+            Nutritionist-formulated savory dishes, healthy treats and wholesome comforting meals.
+          </p>
+        </div>
+
+        <!-- Controls & Link -->
+        <div class="flex items-center gap-3 self-end sm:self-auto">
+          <a href="menu.html" class="hidden sm:inline-flex items-center gap-1.5 text-xs font-bold text-brand-700 hover:text-brand-900 transition-colors mr-2">
+            <span>View All Menu</span>
+            <i class="fa-solid fa-arrow-right text-[10px]"></i>
+          </a>
+          <button 
+            type="button" 
+            id="popular-prev-btn" 
+            class="carousel-nav-btn w-10 h-10 rounded-full bg-white hover:bg-brand-50 text-gray-700 hover:text-brand-800 border border-gray-200 shadow-sm flex items-center justify-center cursor-pointer active:scale-90"
+            aria-label="Previous Popular Item"
+          >
+            <i class="fa-solid fa-chevron-left text-sm"></i>
+          </button>
+          <button 
+            type="button" 
+            id="popular-next-btn" 
+            class="carousel-nav-btn w-10 h-10 rounded-full bg-brand-700 hover:bg-brand-800 text-white shadow-md shadow-brand-700/20 flex items-center justify-center cursor-pointer active:scale-90"
+            aria-label="Next Popular Item"
+          >
+            <i class="fa-solid fa-chevron-right text-sm"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Carousel Track -->
+      <div 
+        id="popular-items-carousel-track" 
+        class="flex gap-5 overflow-x-auto no-scrollbar snap-container py-3 px-1 scroll-smooth"
+      >
+        <!-- Dynamic content loaded via JS -->
+        <div class="py-12 text-center text-gray-400 w-full flex items-center justify-center gap-2">
+          <i class="fa-solid fa-circle-notch fa-spin text-brand-700"></i>
+          <span>Loading popular items...</span>
+        </div>
+      </div>
+
+      <!-- Mobile Hint -->
+      <div class="sm:hidden flex items-center justify-center gap-1.5 pt-3 text-xs text-gray-500">
+        <i class="fa-solid fa-arrows-left-right text-[11px] text-brand-600"></i>
+        <span>Swipe horizontally to browse items</span>
+      </div>
+
     </div>
   </section>
 
@@ -635,15 +770,121 @@
   <script src="assets/js/db.js"></script>
   <script src="assets/js/main.js"></script>
   <script>
-    // Dynamically load popular categories from Firestore / LocalStorage
+    // Helper to render an item card for carousels
+    function createCarouselCard(item) {
+      const unit = item.unit || "pc";
+      const numPrice = typeof item.price === "number" ? item.price : parseInt(String(item.price).replace(/[^\d]/g, ""), 10) || 0;
+      const waUrl = typeof buildWhatsAppOrderUrl === "function" 
+        ? buildWhatsAppOrderUrl(item.name, numPrice, 1, unit) 
+        : `https://wa.me/8801789474381?text=${encodeURIComponent('Hello Health Shark! I would like to order: ' + item.name)}`;
+      const rating = item.rating || 4.9;
+      const reviews = item.reviewsCount ? `${item.reviewsCount} reviews` : "Top Rated";
+
+      return `
+        <div class="w-[78vw] sm:w-[280px] lg:w-[290px] shrink-0 snap-card bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between overflow-hidden group">
+          <!-- Image & Badges -->
+          <div class="relative h-44 w-full overflow-hidden bg-gray-100">
+            <img 
+              src="${item.image || 'assets/images/logo.png'}" 
+              alt="${item.name}" 
+              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+              onerror="this.src='https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=600&q=80'"
+              loading="lazy"
+            />
+            ${item.badge ? `
+              <span class="absolute top-3 left-3 bg-brand-900/90 backdrop-blur-md text-white text-[10px] font-extrabold uppercase tracking-wider px-2.5 py-1 rounded-md shadow-sm">
+                ${item.badge}
+              </span>
+            ` : ""}
+            <div class="absolute top-3 right-3 bg-white/95 backdrop-blur-md px-2 py-0.5 rounded-md text-[11px] font-bold text-gray-800 flex items-center gap-1 shadow-sm">
+              <i class="fa-solid fa-star text-amber-500 text-[10px]"></i>
+              <span>${rating}</span>
+            </div>
+          </div>
+
+          <!-- Card Body -->
+          <div class="p-4 flex-1 flex flex-col justify-between">
+            <div>
+              <span class="text-[10px] font-extrabold uppercase tracking-wider text-brand-700 bg-brand-50 px-2 py-0.5 rounded">
+                ${item.categoryName || item.category || "Healthy Food"}
+              </span>
+              <h3 class="font-heading font-bold text-gray-900 text-base mt-2 line-clamp-1 group-hover:text-brand-700 transition-colors" title="${item.name}">
+                ${item.name}
+              </h3>
+              <p class="text-xs text-gray-500 mt-1 line-clamp-2 leading-relaxed">
+                ${item.description || "Nutritious and fresh homemade meal prepared with wholesome ingredients."}
+              </p>
+            </div>
+
+            <div class="mt-4 pt-3 border-t border-gray-100 flex items-baseline justify-between">
+              <div>
+                <span class="text-[10px] text-gray-400 font-semibold uppercase tracking-wider block">Price</span>
+                <div class="font-heading font-extrabold text-brand-900 text-lg leading-tight">
+                  ৳ ${numPrice}
+                  <span class="text-xs font-semibold text-gray-500">/ ${unit}</span>
+                </div>
+              </div>
+              <span class="text-[11px] text-gray-400 font-medium">${reviews}</span>
+            </div>
+          </div>
+
+          <!-- Action Buttons (Strictly NO Add to Cart!) -->
+          <div class="p-4 pt-0 grid grid-cols-2 gap-2 mt-auto">
+            <a 
+              href="${waUrl}" 
+              target="_blank" 
+              rel="noopener" 
+              class="inline-flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white text-xs font-bold shadow-sm transition-all"
+              title="Order this item directly on WhatsApp"
+            >
+              <i class="fa-brands fa-whatsapp text-sm"></i>
+              <span>Order Now</span>
+            </a>
+            <a 
+              href="item-details.html?id=${item.id}" 
+              class="inline-flex items-center justify-center gap-1 px-3 py-2.5 rounded-xl bg-gray-50 hover:bg-brand-50 hover:text-brand-800 text-gray-700 text-xs font-bold border border-gray-200 hover:border-brand-200 transition-all"
+            >
+              <span>View Details</span>
+              <i class="fa-solid fa-arrow-right text-[10px]"></i>
+            </a>
+          </div>
+        </div>
+      `;
+    }
+
+    // Carousel scroll setup
+    function setupCarouselNav(trackId, prevBtnId, nextBtnId) {
+      const track = document.getElementById(trackId);
+      const prevBtn = document.getElementById(prevBtnId);
+      const nextBtn = document.getElementById(nextBtnId);
+      if (!track) return;
+
+      const getStep = () => {
+        const card = track.querySelector(".snap-card");
+        return card ? card.offsetWidth + 20 : 300;
+      };
+
+      if (prevBtn) {
+        prevBtn.addEventListener("click", () => {
+          track.scrollBy({ left: -getStep(), behavior: "smooth" });
+        });
+      }
+      if (nextBtn) {
+        nextBtn.addEventListener("click", () => {
+          track.scrollBy({ left: getStep(), behavior: "smooth" });
+        });
+      }
+    }
+
     document.addEventListener("DOMContentLoaded", async () => {
-      const container = document.getElementById("popular-categories-grid");
-      if (container && window.hsDB) {
+      // 1. Categories Dynamic Load (Responsive Mobile Snap Slider)
+      const catContainer = document.getElementById("popular-categories-grid");
+      if (catContainer && window.hsDB) {
         try {
           const cats = await window.hsDB.getCategories();
           if (cats && cats.length > 0) {
-            container.innerHTML = cats.map(cat => `
-              <a href="menu.html?cat=${cat.id}" class="hs-card group bg-[#fbfbf9] rounded-2xl p-4 border border-gray-100 flex flex-col justify-between overflow-hidden">
+            catContainer.innerHTML = cats.map(cat => `
+              <a href="menu.html?cat=${cat.id}" class="hs-card group bg-[#fbfbf9] rounded-2xl p-4 border border-gray-100 flex flex-col justify-between overflow-hidden w-[78vw] sm:w-auto shrink-0 snap-card">
                 <div class="h-48 rounded-xl overflow-hidden mb-4 bg-gray-100 relative">
                   <img 
                     src="${cat.image}" 
@@ -667,6 +908,48 @@
           }
         } catch(e) {
           console.warn("Categories dynamic load note:", e);
+        }
+      }
+
+      // 2. Fetch Menu Items for Carousels
+      if (window.hsDB) {
+        try {
+          const allItems = await window.hsDB.getItems();
+          if (allItems && allItems.length > 0) {
+            
+            // A) Best Seller Items: Filter by badge or high rating
+            let bestSellers = allItems.filter(item => 
+              item.badge === "Best Seller" || (item.rating && item.rating >= 4.9)
+            );
+            if (bestSellers.length < 4) {
+              bestSellers = allItems.slice(0, 8);
+            }
+
+            const bestSellerTrack = document.getElementById("bestseller-carousel-track");
+            if (bestSellerTrack) {
+              bestSellerTrack.innerHTML = bestSellers.map(createCarouselCard).join("");
+              setupCarouselNav("bestseller-carousel-track", "bestseller-prev-btn", "bestseller-next-btn");
+            }
+
+            // B) Popular Items: Filter by isPopular or trending badges
+            let popularItems = allItems.filter(item => 
+              item.isPopular === true || 
+              ["Signature Dish", "Customer Favorite", "Must Try", "Kids Favorite"].includes(item.badge)
+            );
+            if (popularItems.length < 4) {
+              popularItems = allItems.filter(i => !bestSellers.slice(0, 4).some(b => b.id === i.id)).slice(0, 8);
+              if (popularItems.length === 0) popularItems = allItems.slice(0, 8);
+            }
+
+            const popularTrack = document.getElementById("popular-items-carousel-track");
+            if (popularTrack) {
+              popularTrack.innerHTML = popularItems.map(createCarouselCard).join("");
+              setupCarouselNav("popular-items-carousel-track", "popular-prev-btn", "popular-next-btn");
+            }
+
+          }
+        } catch(err) {
+          console.warn("Error loading carousels data:", err);
         }
       }
     });

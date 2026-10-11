@@ -114,3 +114,34 @@ h1, h2, h3, .font-heading {
   transform: scale(1.06);
 }
 
+/* Hide scrollbar for clean carousel presentation */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Carousel snap scrolling */
+.snap-container {
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+.snap-card {
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+
+/* Carousel control arrow buttons */
+.carousel-nav-btn {
+  transition: all 0.2s ease;
+}
+.carousel-nav-btn:hover {
+  transform: scale(1.08);
+}
+.carousel-nav-btn:active {
+  transform: scale(0.92);
+}
+
