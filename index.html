@@ -78,7 +78,7 @@
         <!-- Desktop Navigation Links -->
         <nav class="hidden md:flex items-center space-x-8 font-semibold text-sm">
           <a href="index.html" class="text-brand-800 border-b-2 border-brand-700 pb-1">Home</a>
-          <a href="menu.html" class="text-gray-600 hover:text-brand-800 transition-colors">Menu</a>
+          <a href="menu.html" class="text-gray-600 hover:text-brand-800 transition-colors">Food Menu</a>
           <a href="about.html" class="text-gray-600 hover:text-brand-800 transition-colors">About</a>
           <a href="contact.html" class="text-gray-600 hover:text-brand-800 transition-colors">Contact</a>
         </nav>
@@ -122,7 +122,7 @@
     <!-- Mobile Drawer Menu -->
     <div id="mobile-menu" class="hidden md:hidden border-t border-gray-100 bg-white px-4 pt-3 pb-6 space-y-3 shadow-lg">
       <a href="index.html" class="block py-2 text-brand-800 font-bold border-l-4 border-brand-700 pl-3">Home</a>
-      <a href="menu.html" class="block py-2 text-gray-600 font-medium hover:text-brand-800 pl-3">Our Menu</a>
+      <a href="menu.html" class="block py-2 text-gray-600 font-medium hover:text-brand-800 pl-3">Food Menu</a>
       <a href="about.html" class="block py-2 text-gray-600 font-medium hover:text-brand-800 pl-3">About Us</a>
       <a href="contact.html" class="block py-2 text-gray-600 font-medium hover:text-brand-800 pl-3">Contact & Location</a>
       <div class="pt-3 border-t border-gray-100 flex flex-col gap-2">
@@ -275,8 +275,8 @@
         <p class="text-sm sm:text-base text-gray-500 mt-2">From fresh snacks to hearty meals — we have something nutritious for everyone.</p>
       </div>
 
-      <!-- Categories Grid (6 Cards matching Mockup) -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- Categories Grid (Dynamic from Firestore / Seed) -->
+      <div id="popular-categories-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         
         <!-- Card 1: Snacks & Special Bites -->
         <a href="menu.html?cat=snacks" class="hs-card group bg-[#fbfbf9] rounded-2xl p-4 border border-gray-100 flex flex-col justify-between overflow-hidden">
@@ -634,6 +634,43 @@
   <script src="assets/js/firebase-config.js"></script>
   <script src="assets/js/db.js"></script>
   <script src="assets/js/main.js"></script>
+  <script>
+    // Dynamically load popular categories from Firestore / LocalStorage
+    document.addEventListener("DOMContentLoaded", async () => {
+      const container = document.getElementById("popular-categories-grid");
+      if (container && window.hsDB) {
+        try {
+          const cats = await window.hsDB.getCategories();
+          if (cats && cats.length > 0) {
+            container.innerHTML = cats.map(cat => `
+              <a href="menu.html?cat=${cat.id}" class="hs-card group bg-[#fbfbf9] rounded-2xl p-4 border border-gray-100 flex flex-col justify-between overflow-hidden">
+                <div class="h-48 rounded-xl overflow-hidden mb-4 bg-gray-100 relative">
+                  <img 
+                    src="${cat.image}" 
+                    alt="${cat.name}" 
+                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    onerror="this.src='assets/images/logo.png'"
+                  />
+                  ${cat.badge ? `<span class="absolute top-3 left-3 bg-white/90 backdrop-blur-md px-2.5 py-0.5 rounded-md text-[11px] font-bold text-brand-900 shadow-sm">${cat.badge}</span>` : ""}
+                </div>
+                <div class="flex items-center justify-between pt-1">
+                  <div>
+                    <h3 class="font-heading font-bold text-base text-gray-900 group-hover:text-brand-700 transition-colors">${cat.name}</h3>
+                    <p class="text-xs text-gray-500 mt-0.5">${cat.subtitle || ""}</p>
+                  </div>
+                  <div class="w-10 h-10 rounded-full bg-white group-hover:bg-brand-700 text-brand-700 group-hover:text-white border border-gray-200 group-hover:border-transparent flex items-center justify-center shrink-0 transition-colors shadow-sm">
+                    <i class="fa-solid fa-arrow-right text-xs"></i>
+                  </div>
+                </div>
+              </a>
+            `).join("");
+          }
+        } catch(e) {
+          console.warn("Categories dynamic load note:", e);
+        }
+      }
+    });
+  </script>
 </body>
 </html>
 

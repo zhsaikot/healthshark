@@ -1,12 +1,12 @@
 /**
  * Health Shark - Menu Page Logic
- * Category filtering, search filtering, WhatsApp order linking, View Details routing.
+ * Dynamic categories from Firestore, filtering, search, WhatsApp order linking, View Details routing.
  */
 
 document.addEventListener("DOMContentLoaded", async () => {
   const menuGrid = document.getElementById("menu-grid");
-  const categoryTabs = document.querySelectorAll("[data-category-filter]");
-  const sidebarCategoryLinks = document.querySelectorAll("[data-sidebar-category]");
+  const topPillsContainer = document.getElementById("category-pills-bar");
+  const sidebarContainer = document.getElementById("sidebar-categories-list");
   const searchInput = document.getElementById("menu-search-input");
   const currentCategoryTitle = document.getElementById("current-category-title");
   const itemsCountBadge = document.getElementById("items-count-badge");
@@ -14,9 +14,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   const activeFilterInfo = document.getElementById("active-filter-name");
 
   let allItems = [];
+  let allCategories = [];
   let currentCategory = "all";
   let searchQuery = "";
-  let visibleCount = 9; // Show initial 9 items matching mockup grid
+  let visibleCount = 9;
   const itemsPerLoad = 6;
 
   // Read URL param for category or search (e.g. menu.html?cat=snacks)
@@ -29,12 +30,19 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (searchInput) searchInput.value = searchQuery;
   }
 
-  // Load items from database
+  // Load categories and items from database
   try {
-    allItems = await window.hsDB.getItems();
+    const [items, cats] = await Promise.all([
+      window.hsDB.getItems(),
+      window.hsDB.getCategories()
+    ]);
+    allItems = items;
+    allCategories = cats;
+
+    renderCategoryNavigators();
     updateUI();
   } catch (err) {
-    console.error("Failed to load menu items:", err);
+    console.error("Failed to load menu data:", err);
     if (menuGrid) {
       menuGrid.innerHTML = `
         <div class="col-span-full py-12 text-center text-gray-500">
@@ -46,22 +54,69 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
-  // Category Tab clicks
-  categoryTabs.forEach((tab) => {
-    tab.addEventListener("click", () => {
-      const cat = tab.getAttribute("data-category-filter");
-      setCategory(cat);
-    });
-  });
+  // Render Top Pills & Sidebar Links dynamically
+  function renderCategoryNavigators() {
+    // Top Pills
+    if (topPillsContainer) {
+      let pillsHtml = `
+        <button 
+          data-category-filter="all" 
+          class="cat-pill px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold transition-all flex items-center gap-2 ${currentCategory === 'all' ? 'bg-emerald-800 text-white shadow-md' : 'bg-white text-gray-700 hover:bg-emerald-50 border border-gray-200'}"
+        >
+          <i class="fa-solid fa-utensils"></i> All Items
+        </button>
+      `;
 
-  // Sidebar category clicks
-  sidebarCategoryLinks.forEach((link) => {
-    link.addEventListener("click", (e) => {
-      e.preventDefault();
-      const cat = link.getAttribute("data-sidebar-category");
-      setCategory(cat);
-    });
-  });
+      allCategories.forEach((cat) => {
+        const isActive = currentCategory === cat.id;
+        pillsHtml += `
+          <button 
+            data-category-filter="${cat.id}" 
+            class="cat-pill px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold transition-all flex items-center gap-2 ${isActive ? 'bg-emerald-800 text-white shadow-md' : 'bg-white text-gray-700 hover:bg-emerald-50 border border-gray-200'}"
+          >
+            <i class="fa-solid ${cat.icon || 'fa-tag'}"></i> ${cat.name}
+          </button>
+        `;
+      });
+      topPillsContainer.innerHTML = pillsHtml;
+
+      // Attach click events
+      topPillsContainer.querySelectorAll("[data-category-filter]").forEach((tab) => {
+        tab.addEventListener("click", () => {
+          setCategory(tab.getAttribute("data-category-filter"));
+        });
+      });
+    }
+
+    // Sidebar Links
+    if (sidebarContainer) {
+      let sideHtml = `
+        <a href="#" data-sidebar-category="all" class="side-cat-link flex items-center gap-3 px-3 py-2.5 rounded-xl font-semibold transition-colors ${currentCategory === 'all' ? 'bg-emerald-800 text-white' : 'text-gray-700 hover:bg-emerald-50'}">
+          <i class="fa-solid fa-border-all text-xs w-5 text-center"></i>
+          <span>All Categories</span>
+        </a>
+      `;
+
+      allCategories.forEach((cat) => {
+        const isActive = currentCategory === cat.id;
+        sideHtml += `
+          <a href="#" data-sidebar-category="${cat.id}" class="side-cat-link flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors ${isActive ? 'bg-emerald-800 text-white font-semibold' : 'text-gray-700 hover:bg-emerald-50'}">
+            <i class="fa-solid ${cat.icon || 'fa-tag'} text-xs w-5 text-center ${isActive ? 'text-white' : 'text-brand-700'}"></i>
+            <span>${cat.name}</span>
+          </a>
+        `;
+      });
+      sidebarContainer.innerHTML = sideHtml;
+
+      // Attach click events
+      sidebarContainer.querySelectorAll("[data-sidebar-category]").forEach((link) => {
+        link.addEventListener("click", (e) => {
+          e.preventDefault();
+          setCategory(link.getAttribute("data-sidebar-category"));
+        });
+      });
+    }
+  }
 
   // Search input typing
   if (searchInput) {
@@ -83,7 +138,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   function setCategory(cat) {
     currentCategory = cat;
     visibleCount = 9;
-    
+
     // Update URL without refreshing page
     const newUrl = new URL(window.location);
     if (cat === "all") {
@@ -97,42 +152,34 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   function updateUI() {
-    // Update Tab highlights
-    categoryTabs.forEach((tab) => {
+    // Update Top Pills Active Style
+    const pills = document.querySelectorAll("[data-category-filter]");
+    pills.forEach((tab) => {
       const cat = tab.getAttribute("data-category-filter");
       if (cat === currentCategory) {
-        tab.classList.add("bg-emerald-800", "text-white", "shadow-md");
-        tab.classList.remove("bg-white", "text-gray-700", "hover:bg-emerald-50");
+        tab.className = "cat-pill px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold transition-all flex items-center gap-2 bg-emerald-800 text-white shadow-md";
       } else {
-        tab.classList.remove("bg-emerald-800", "text-white", "shadow-md");
-        tab.classList.add("bg-white", "text-gray-700", "hover:bg-emerald-50");
+        tab.className = "cat-pill px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold transition-all flex items-center gap-2 bg-white text-gray-700 hover:bg-emerald-50 border border-gray-200";
       }
     });
 
-    // Update Sidebar links
-    sidebarCategoryLinks.forEach((link) => {
+    // Update Sidebar Active Style
+    const sideLinks = document.querySelectorAll("[data-sidebar-category]");
+    sideLinks.forEach((link) => {
       const cat = link.getAttribute("data-sidebar-category");
+      const icon = link.querySelector("i");
       if (cat === currentCategory) {
-        link.classList.add("bg-emerald-800", "text-white", "font-semibold");
-        link.classList.remove("text-gray-700", "hover:bg-emerald-50");
+        link.className = "side-cat-link flex items-center gap-3 px-3 py-2.5 rounded-xl font-semibold transition-colors bg-emerald-800 text-white";
+        if (icon) icon.className = icon.className.replace("text-brand-700", "text-white");
       } else {
-        link.classList.remove("bg-emerald-800", "text-white", "font-semibold");
-        link.classList.add("text-gray-700", "hover:bg-emerald-50");
+        link.className = "side-cat-link flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors text-gray-700 hover:bg-emerald-50";
+        if (icon) icon.className = icon.className.replace("text-white", "text-brand-700");
       }
     });
 
-    // Category title
-    const categoryNames = {
-      all: "All Items",
-      snacks: "Snacks & Special Bites",
-      burgers: "Burgers & Sandwiches",
-      noodles: "Noodles & Pasta",
-      meals: "Pre-Order Meals & Combos",
-      desserts: "Baked Goods & Desserts",
-      ingredients: "Raw & Specialty Ingredients"
-    };
-
-    const activeName = categoryNames[currentCategory] || "Menu Items";
+    // Category Title Display
+    const foundCat = allCategories.find((c) => c.id === currentCategory);
+    const activeName = currentCategory === "all" ? "All Items" : (foundCat ? foundCat.name : "Menu Items");
     if (currentCategoryTitle) currentCategoryTitle.textContent = activeName;
     if (activeFilterInfo) activeFilterInfo.textContent = activeName;
 
@@ -179,7 +226,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     menuGrid.innerHTML = itemsToDisplay
       .map((item) => {
-        const waUrl = buildWhatsAppOrderUrl(item.name, item.price);
+        const itemUnit = item.unit || "pc";
+        const waUrl = buildWhatsAppOrderUrl(item.name, item.price, 1, itemUnit);
         return `
           <div class="hs-card bg-white rounded-2xl overflow-hidden border border-gray-100/90 shadow-sm flex flex-col group">
             <!-- Image with Badge -->
@@ -224,7 +272,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 <div class="flex items-baseline justify-between mb-3">
                   <span class="text-xs text-gray-400 font-medium">Price</span>
                   <div class="text-xl font-extrabold text-emerald-800">
-                    ৳ ${item.price}
+                    ৳ ${item.price} <span class="text-xs font-semibold text-gray-500 font-sans">/ ${itemUnit}</span>
                   </div>
                 </div>
 
@@ -267,4 +315,3 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
 });
-

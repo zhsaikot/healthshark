@@ -24,18 +24,20 @@ const HEALTH_SHARK = {
  * @param {string} itemName 
  * @param {number|string} price 
  * @param {number} quantity 
+ * @param {string} unit 
  * @param {string} extraNotes 
  * @returns {string} wa.me URL
  */
-function buildWhatsAppOrderUrl(itemName, price, quantity = 1, extraNotes = "") {
+function buildWhatsAppOrderUrl(itemName, price, quantity = 1, unit = "pc", extraNotes = "") {
   const numPrice = typeof price === "number" ? price : parseInt(String(price).replace(/[^\d]/g, ""), 10) || 0;
   const totalPrice = numPrice * quantity;
+  const cleanUnit = unit || "pc";
   
   let message = `Hello Health Shark! 👋\nI would like to place an order:\n\n`;
   message += `🍽️ Item: ${itemName}\n`;
-  message += `🔢 Quantity: ${quantity}\n`;
+  message += `🔢 Quantity: ${quantity} ${cleanUnit}\n`;
   if (numPrice > 0) {
-    message += `💵 Price: ৳${numPrice} each (Total: ৳${totalPrice})\n`;
+    message += `💵 Price: ৳${numPrice} / ${cleanUnit} (Total: ৳${totalPrice})\n`;
   }
   if (extraNotes) {
     message += `📝 Note: ${extraNotes}\n`;
@@ -191,11 +193,11 @@ document.addEventListener("DOMContentLoaded", () => {
               <img src="${item.image}" alt="${item.name}" class="w-12 h-12 object-cover rounded-lg shadow-sm group-hover:scale-105 transition-transform" onerror="this.src='assets/images/logo.png'">
               <div>
                 <h4 class="font-semibold text-gray-900 group-hover:text-emerald-700 transition-colors text-sm">${item.name}</h4>
-                <p class="text-xs text-gray-500">${item.categoryName || item.category} • <span class="font-bold text-emerald-700">৳ ${item.price}</span></p>
+                <p class="text-xs text-gray-500">${item.categoryName || item.category} • <span class="font-bold text-emerald-700">৳ ${item.price} <span class="text-[10px] font-normal text-gray-500">/ ${item.unit || 'pc'}</span></span></p>
               </div>
             </a>
             <div class="flex items-center gap-2">
-              <a href="${buildWhatsAppOrderUrl(item.name, item.price)}" target="_blank" rel="noopener" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-medium flex items-center gap-1 shadow-sm">
+              <a href="${buildWhatsAppOrderUrl(item.name, item.price, 1, item.unit || 'pc')}" target="_blank" rel="noopener" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-medium flex items-center gap-1 shadow-sm">
                 <i class="fa-brands fa-whatsapp text-sm"></i> Order
               </a>
               <a href="item-details.html?id=${item.id}" class="p-2 text-gray-400 hover:text-emerald-700 rounded-lg hover:bg-white text-xs">

@@ -1,6 +1,6 @@
 /**
  * Health Shark - Product Details Page Logic
- * Dynamic single item render, gallery switcher, quantity selector, WhatsApp prefilled link, and recommendations.
+ * Dynamic single item render, gallery switcher, unit-based quantity selector, WhatsApp prefilled link, and recommendations.
  */
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -27,6 +27,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const itemDescription = document.getElementById("item-description");
   const featuresList = document.getElementById("features-list");
 
+  const qtyLabel = document.getElementById("qty-label");
   const qtyInput = document.getElementById("qty-input");
   const qtyMinus = document.getElementById("qty-minus");
   const qtyPlus = document.getElementById("qty-plus");
@@ -50,6 +51,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   function renderItemDetails(item) {
     document.title = `${item.name} - Health Shark`;
+    const itemUnit = item.unit || "pc";
 
     // Breadcrumbs & Top Banner
     if (breadcrumbCategory) {
@@ -59,15 +61,21 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (breadcrumbItem) breadcrumbItem.textContent = item.name;
     if (bannerTitle) bannerTitle.textContent = item.name;
     if (bannerCategory) bannerCategory.textContent = item.categoryName || item.category;
-    if (bannerPrice) bannerPrice.textContent = `৳ ${item.price}`;
+    if (bannerPrice) bannerPrice.innerHTML = `৳ ${item.price} <span class="text-sm font-normal text-brand-300">/ ${itemUnit}</span>`;
 
     // Item Details
     if (itemTitle) itemTitle.textContent = item.name;
     if (itemCategoryBadge) itemCategoryBadge.textContent = item.categoryName || item.category;
-    if (itemPrice) itemPrice.textContent = `৳ ${item.price}`;
+    if (itemPrice) {
+      itemPrice.innerHTML = `৳ ${item.price} <span class="text-sm font-semibold text-gray-500 font-sans">/ ${itemUnit}</span>`;
+    }
     if (itemRating) itemRating.textContent = item.rating || "4.9";
     if (itemReviewsCount) itemReviewsCount.textContent = `(${item.reviewsCount || 45} customer reviews)`;
     if (itemDescription) itemDescription.textContent = item.description;
+
+    if (qtyLabel) {
+      qtyLabel.textContent = `Select Quantity (${itemUnit})`;
+    }
 
     // Main image
     if (mainImage) {
@@ -78,7 +86,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Gallery thumbnails
     if (imageGallery) {
       const images = item.gallery && item.gallery.length > 0 ? item.gallery : [item.image];
-      // Ensure at least 3 thumbnail slots
       if (images.length === 1) {
         images.push(item.image);
       }
@@ -171,12 +178,14 @@ document.addEventListener("DOMContentLoaded", async () => {
   function updatePriceAndWhatsAppUrl() {
     if (!currentItem) return;
     const total = currentItem.price * currentQuantity;
+    const itemUnit = currentItem.unit || "pc";
+
     if (totalPriceDisplay) {
-      totalPriceDisplay.textContent = `৳ ${total}`;
+      totalPriceDisplay.innerHTML = `৳ ${total} <span class="text-xs font-semibold text-gray-400 font-sans">(${currentQuantity} ${itemUnit})</span>`;
     }
 
     if (orderWhatsAppBtn) {
-      const waUrl = buildWhatsAppOrderUrl(currentItem.name, currentItem.price, currentQuantity);
+      const waUrl = buildWhatsAppOrderUrl(currentItem.name, currentItem.price, currentQuantity, itemUnit);
       orderWhatsAppBtn.href = waUrl;
     }
   }
@@ -185,7 +194,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (!recommendationsGrid) return;
     const all = await window.hsDB.getItems();
 
-    // Prefer same category, then others
     let related = all.filter((i) => i.id !== current.id && i.category === current.category);
     if (related.length < 4) {
       const remaining = all.filter((i) => i.id !== current.id && i.category !== current.category);
@@ -195,13 +203,14 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     recommendationsGrid.innerHTML = showcase
       .map((item) => {
-        const waUrl = buildWhatsAppOrderUrl(item.name, item.price);
+        const itemUnit = item.unit || "pc";
+        const waUrl = buildWhatsAppOrderUrl(item.name, item.price, 1, itemUnit);
         return `
           <div class="hs-card bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm flex flex-col group">
             <a href="item-details.html?id=${item.id}" class="block h-44 w-full img-zoom-container bg-gray-100 relative">
               <img src="${item.image}" alt="${item.name}" class="w-full h-full object-cover" loading="lazy" onerror="this.src='assets/images/logo.png'">
               <span class="absolute top-2 right-2 bg-white/90 backdrop-blur-md px-2 py-0.5 rounded-md text-[11px] font-bold text-gray-800 shadow-sm">
-                ৳ ${item.price}
+                ৳ ${item.price} <span class="text-[9px] font-normal text-gray-500">/ ${itemUnit}</span>
               </span>
             </a>
             <div class="p-4 flex-1 flex flex-col justify-between">
@@ -228,4 +237,3 @@ document.addEventListener("DOMContentLoaded", async () => {
       .join("");
   }
 });
-
