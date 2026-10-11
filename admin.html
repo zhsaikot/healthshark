@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard - Health Shark</title>
+  <link rel="icon" type="image/x-icon" href="favicon.ico" />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#f0fdf4',
+              100: '#dcfce7',
+              200: '#bbf7d0',
+              300: '#86efac',
+              400: '#4ade80',
+              500: '#22c55e',
+              600: '#16a34a',
+              700: '#15803d',
+              800: '#166534',
+              900: '#14532d',
+              950: '#0c361e',
+            }
+          },
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            heading: ['"Outfit"', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Font Awesome 6 Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body class="bg-gray-50 text-gray-800 antialiased flex flex-col min-h-screen">
+
+  <!-- ==================== ADMIN NAVBAR ==================== -->
+  <header class="bg-brand-950 text-white border-b border-brand-900 sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <a href="index.html" class="flex items-center gap-2.5">
+          <img src="assets/images/logo.png" alt="Health Shark Logo" class="h-9 w-auto brightness-110" />
+          <span class="font-heading font-extrabold text-lg text-white tracking-tight">Health Shark</span>
+        </a>
+        <span class="text-xs px-2 py-0.5 rounded bg-brand-800 text-brand-200 font-bold uppercase tracking-wider">
+          Admin Portal
+        </span>
+      </div>
+
+      <div class="flex items-center gap-4">
+        <!-- Live status badge -->
+        <div id="firebase-status-badge">
+          <!-- Filled dynamically by admin.js -->
+        </div>
+
+        <a href="index.html" class="text-xs text-brand-200 hover:text-white flex items-center gap-1.5 transition-colors">
+          <i class="fa-solid fa-store"></i>
+          <span class="hidden sm:inline">View Public Website</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==================== 1. LOGIN / AUTH SECTION ==================== -->
+  <section id="auth-section" class="flex-1 flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl p-8 sm:p-10 border border-gray-200 shadow-xl w-full max-w-md space-y-6">
+      <div class="text-center space-y-2">
+        <div class="w-16 h-16 mx-auto bg-brand-50 rounded-2xl flex items-center justify-center text-brand-800 text-2xl shadow-inner border border-brand-100">
+          <i class="fa-solid fa-lock"></i>
+        </div>
+        <h2 class="font-heading text-2xl font-extrabold text-gray-900">Admin Sign In</h2>
+        <p class="text-xs text-gray-500">Sign in to manage Health Shark menu items and Firestore database</p>
+      </div>
+
+      <!-- Error box -->
+      <div id="login-error" class="hidden p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs font-medium"></div>
+
+      <!-- Login Form -->
+      <form id="login-form" class="space-y-4">
+        <div>
+          <label for="login-email" class="block text-xs font-bold uppercase tracking-wider text-gray-600 mb-1">
+            Email Address
+          </label>
+          <input 
+            type="email" 
+            id="login-email" 
+            required 
+            placeholder="admin@healthshark.com" 
+            class="w-full px-4 py-2.5 rounded-xl border border-gray-300 focus:border-brand-700 focus:ring-2 focus:ring-brand-100 text-sm outline-none transition-all"
+          />
+        </div>
+
+        <div>
+          <label for="login-password" class="block text-xs font-bold uppercase tracking-wider text-gray-600 mb-1">
+            Password
+          </label>
+          <input 
+            type="password" 
+            id="login-password" 
+            required 
+            placeholder="••••••••" 
+            class="w-full px-4 py-2.5 rounded-xl border border-gray-300 focus:border-brand-700 focus:ring-2 focus:ring-brand-100 text-sm outline-none transition-all"
+          />
+        </div>
+
+        <button 
+          type="submit" 
+          class="w-full py-3 px-4 bg-brand-800 hover:bg-brand-900 active:scale-95 text-white font-bold text-xs uppercase tracking-wider rounded-xl shadow-md transition-all"
+        >
+          Sign In
+        </button>
+      </form>
+
+      <!-- Instant Demo Login Helper -->
+      <div class="pt-4 border-t border-gray-100 text-center space-y-2">
+        <p class="text-xs text-gray-400">Testing locally before configuring Firebase?</p>
+        <button 
+          type="button" 
+          id="demo-login-btn" 
+          class="w-full py-2.5 px-4 bg-gray-100 hover:bg-emerald-50 hover:text-brand-800 text-gray-700 text-xs font-bold rounded-xl border border-gray-200 transition-colors"
+        >
+          <i class="fa-solid fa-wand-magic-sparkles mr-1.5 text-amber-500"></i> One-Click Demo Mode Sign In
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== 2. MAIN ADMIN DASHBOARD SECTION ==================== -->
+  <section id="dashboard-section" class="hidden flex-1 py-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full space-y-8">
+    
+    <!-- Top Bar: Welcome & Actions -->
+    <div class="bg-white p-6 rounded-3xl border border-gray-200/80 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div>
+        <span class="text-xs font-bold text-emerald-700 uppercase tracking-wider">Dashboard Overview</span>
+        <h1 class="font-heading text-2xl font-extrabold text-gray-900 mt-0.5">
+          Health Shark Menu Management
+        </h1>
+        <p class="text-xs text-gray-500 mt-1">
+          Logged in as: <span id="current-user-email" class="font-semibold text-gray-800">admin</span>
+        </p>
+      </div>
+
+      <div class="flex items-center gap-3 flex-wrap">
+        <!-- Seed Sync Button -->
+        <button 
+          type="button" 
+          id="seed-sync-btn" 
+          class="px-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold rounded-xl border border-gray-200 flex items-center gap-2 transition-all"
+          title="Seed initial items into database"
+        >
+          <i class="fa-solid fa-cloud-arrow-up text-brand-700"></i>
+          <span>Seed / Restore Default Menu</span>
+        </button>
+
+        <!-- Add New Item Modal Trigger -->
+        <button 
+          type="button" 
+          id="open-add-modal-btn" 
+          class="px-5 py-2.5 bg-brand-800 hover:bg-brand-900 active:scale-95 text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow-md flex items-center gap-2 transition-all"
+        >
+          <i class="fa-solid fa-plus"></i>
+          <span>Add New Dish</span>
+        </button>
+
+        <!-- Logout Button -->
+        <button 
+          type="button" 
+          id="logout-btn" 
+          class="p-2.5 rounded-xl text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors" 
+          title="Sign Out"
+        >
+          <i class="fa-solid fa-arrow-right-from-bracket text-lg"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Quick Stats Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+      
+      <div class="bg-white p-5 rounded-2xl border border-gray-200/80 shadow-sm flex items-center gap-4">
+        <div class="w-12 h-12 rounded-xl bg-emerald-100 text-brand-800 flex items-center justify-center text-xl shrink-0">
+          <i class="fa-solid fa-utensils"></i>
+        </div>
+        <div>
+          <span class="text-xs text-gray-400 font-medium">Total Menu Items</span>
+          <div id="total-items-count" class="text-2xl font-black text-gray-900">0</div>
+        </div>
+      </div>
+
+      <div class="bg-white p-5 rounded-2xl border border-gray-200/80 shadow-sm flex items-center gap-4">
+        <div class="w-12 h-12 rounded-xl bg-blue-100 text-blue-800 flex items-center justify-center text-xl shrink-0">
+          <i class="fa-solid fa-layer-group"></i>
+        </div>
+        <div>
+          <span class="text-xs text-gray-400 font-medium">Active Categories</span>
+          <div id="categories-count" class="text-2xl font-black text-gray-900">6</div>
+        </div>
+      </div>
+
+      <div class="bg-white p-5 rounded-2xl border border-gray-200/80 shadow-sm flex items-center gap-4">
+        <div class="w-12 h-12 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center text-xl shrink-0">
+          <i class="fa-solid fa-bolt"></i>
+        </div>
+        <div>
+          <span class="text-xs text-gray-400 font-medium">Ordering Mode</span>
+          <div class="text-sm font-extrabold text-emerald-700">Direct WhatsApp API</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Menu Items Table Card -->
+    <div class="bg-white rounded-3xl border border-gray-200/80 shadow-sm overflow-hidden space-y-4 p-6">
+      
+      <!-- Table Controls -->
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+        <h3 class="font-heading font-bold text-lg text-gray-900">All Menu Dishes</h3>
+
+        <div class="flex items-center gap-3 w-full sm:w-auto">
+          <!-- Search input -->
+          <div class="relative w-full sm:w-60">
+            <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
+            <input 
+              type="text" 
+              id="admin-search-input" 
+              placeholder="Search dishes..." 
+              class="w-full pl-8 pr-3 py-1.5 bg-gray-50 border border-gray-200 rounded-lg text-xs outline-none focus:border-brand-700"
+            />
+          </div>
+
+          <!-- Category filter -->
+          <select 
+            id="admin-category-filter" 
+            class="py-1.5 px-3 bg-gray-50 border border-gray-200 rounded-lg text-xs outline-none focus:border-brand-700"
+          >
+            <option value="all">All Categories</option>
+            <option value="snacks">Snacks & Special Bites</option>
+            <option value="burgers">Burgers & Sandwiches</option>
+            <option value="noodles">Noodles & Pasta</option>
+            <option value="meals">Pre-Order Meals & Combos</option>
+            <option value="desserts">Baked Goods & Desserts</option>
+            <option value="ingredients">Raw & Specialty Ingredients</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="border-b border-gray-200 text-[11px] font-bold uppercase tracking-wider text-gray-400 bg-gray-50/70">
+              <th class="py-3 px-4">Dish</th>
+              <th class="py-3 px-4">Category</th>
+              <th class="py-3 px-4">Price (BDT)</th>
+              <th class="py-3 px-4">Badge</th>
+              <th class="py-3 px-4 text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="admin-items-table">
+            <!-- Dynamically populated by admin.js -->
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- ==================== 3. ADD / EDIT ITEM MODAL ==================== -->
+  <div id="item-modal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm items-center justify-center p-4">
+    <div class="bg-white w-full max-w-2xl rounded-3xl shadow-2xl overflow-hidden border border-gray-100 max-h-[90vh] flex flex-col">
+      
+      <!-- Modal Header -->
+      <div class="p-6 border-b border-gray-100 flex items-center justify-between">
+        <h3 id="modal-title" class="font-heading font-extrabold text-xl text-gray-900">Add New Menu Item</h3>
+        <button id="close-modal-btn" class="p-2 text-gray-400 hover:text-gray-700 rounded-lg">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <!-- Modal Body Form -->
+      <form id="item-form" class="p-6 overflow-y-auto space-y-4 flex-1">
+        <input type="hidden" id="form-item-id" />
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <!-- Item Title -->
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-gray-600 mb-1">Dish Name *</label>
+            <input 
+              type="text" 
+              id="form-title" 
+              required 
+              placeholder="e.g. Steamed Chicken Momos" 
+              class="w-full px-3.5 py-2 rounded-xl border border-gray-300 text-sm outline-none focus:border-brand-700"
+            />
+          </div>
+
+          <!-- Category -->
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-gray-600 mb-1">Category *</label>
+            <select 
+              id="form-category" 
+              required 
+              class="w-full px-3.5 py-2 rounded-xl border border-gray-300 text-sm outline-none focus:border-brand-700 bg-white"
+            >
+              <option value="snacks">Snacks & Special Bites</option>
+              <option value="burgers">Burgers & Sandwiches</option>
+              <option value="noodles">Noodles & Pasta</option>
+              <option value="meals">Pre-Order Meals & Combos</option>
+              <option value="desserts">Baked Goods & Desserts</option>
+              <option value="ingredients">Raw & Specialty Ingredients</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <!-- Price -->
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-gray-600 mb-1">Price (in BDT ৳) *</label>
+            <input 
+              type="number" 
+              id="form-price" 
+              required 
+              min="1" 
+              placeholder="140" 
+              class="w-full px-3.5 py-2 rounded-xl border border-gray-300 text-sm outline-none focus:border-brand-700"
+            />
+          </div>
+
+          <!-- Badge -->
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-gray-600 mb-1">Badge (Optional)</label>
+            <input 
+              type="text" 
+              id="form-badge" 
+              placeholder="e.g. Best Seller, Signature Dish, Pre-Order" 
+              class="w-full px-3.5 py-2 rounded-xl border border-gray-300 text-sm outline-none focus:border-brand-700"
+            />
+          </div>
+        </div>
+
+        <!-- Description -->
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-gray-600 mb-1">Description *</label>
+          <textarea 
+            id="form-description" 
+            rows="3" 
+            required 
+            placeholder="Tell customers about the taste, ingredients, and health benefits..." 
+            class="w-full px-3.5 py-2 rounded-xl border border-gray-300 text-sm outline-none focus:border-brand-700"
+          ></textarea>
+        </div>
+
+        <!-- Key Features -->
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-gray-600 mb-1">
+            Key Features (One per line)
+          </label>
+          <textarea 
+            id="form-features" 
+            rows="3" 
+            placeholder="100% Fresh Farm Chicken&#10;No artificial preservatives&#10;Homemade special dip" 
+            class="w-full px-3.5 py-2 rounded-xl border border-gray-300 text-sm outline-none focus:border-brand-700"
+          ></textarea>
+        </div>
+
+        <!-- Image Input: URL or File -->
+        <div class="space-y-2 border-t border-gray-100 pt-3">
+          <label class="block text-xs font-bold uppercase tracking-wider text-gray-600">Item Image</label>
+          
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 items-center">
+            <div>
+              <span class="text-[11px] text-gray-500 block mb-1">Option A: Image Web URL</span>
+              <input 
+                type="url" 
+                id="form-image-url" 
+                placeholder="https://images.unsplash.com/..." 
+                class="w-full px-3.5 py-2 rounded-xl border border-gray-300 text-xs outline-none focus:border-brand-700"
+              />
+            </div>
+
+            <div>
+              <span class="text-[11px] text-gray-500 block mb-1">Option B: Upload File (Storage)</span>
+              <input 
+                type="file" 
+                id="form-image-file" 
+                accept="image/*" 
+                class="w-full text-xs text-gray-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-emerald-50 file:text-brand-800 hover:file:bg-emerald-100"
+              />
+            </div>
+          </div>
+
+          <!-- Preview -->
+          <div class="pt-2">
+            <img id="image-preview" src="" alt="Preview" class="hidden h-24 w-36 rounded-xl object-cover border border-gray-200 shadow-sm" />
+          </div>
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="pt-4 border-t border-gray-100 flex items-center justify-end gap-3">
+          <button 
+            type="button" 
+            id="cancel-modal-btn" 
+            class="px-5 py-2.5 rounded-xl border border-gray-300 text-xs font-bold text-gray-700 hover:bg-gray-100 transition-colors"
+          >
+            Cancel
+          </button>
+          <button 
+            type="submit" 
+            class="px-6 py-2.5 rounded-xl bg-brand-800 hover:bg-brand-900 active:scale-95 text-white text-xs font-bold uppercase tracking-wider shadow-md transition-all"
+          >
+            Save Dish
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
+  <!-- Firebase & App Scripts -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
+
+  <script src="assets/js/seed-data.js"></script>
+  <script src="assets/js/firebase-config.js"></script>
+  <script src="assets/js/db.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script src="assets/js/admin.js"></script>
+</body>
+</html>

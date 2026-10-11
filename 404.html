@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Page Not Found - Health Shark</title>
+  <link rel="icon" type="image/x-icon" href="favicon.ico" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#f0fdf4',
+              100: '#dcfce7',
+              700: '#15803d',
+              800: '#166534',
+              900: '#14532d',
+              950: '#0c361e',
+            }
+          },
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            heading: ['"Outfit"', 'sans-serif'],
+            handwriting: ['"Caveat"', 'cursive'],
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body class="bg-[#fafbf9] text-gray-800 antialiased flex flex-col min-h-screen items-center justify-center p-6 text-center">
+
+  <div class="max-w-md w-full bg-white rounded-3xl p-8 border border-gray-100 shadow-xl space-y-6">
+    <a href="index.html" class="inline-block">
+      <img src="assets/images/logo.png" alt="Health Shark Logo" class="h-20 w-auto mx-auto object-contain" />
+    </a>
+
+    <div class="space-y-2">
+      <span class="text-6xl font-black text-brand-800 font-heading">404</span>
+      <h1 class="text-2xl font-extrabold text-gray-900 font-heading">Page Not Found</h1>
+      <p class="text-sm text-gray-500 leading-relaxed">
+        The healthy treat or page you are looking for doesn't exist or has moved.
+      </p>
+    </div>
+
+    <div class="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+      <a href="index.html" class="w-full sm:w-auto px-6 py-3 rounded-xl bg-brand-800 hover:bg-brand-900 text-white font-bold text-xs uppercase tracking-wider shadow-md transition-all">
+        Back to Home
+      </a>
+      <a href="menu.html" class="w-full sm:w-auto px-6 py-3 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-brand-800 font-bold text-xs uppercase tracking-wider transition-all">
+        View Menu
+      </a>
+    </div>
+  </div>
+
+  <div class="mt-8 text-xs text-gray-400">
+    © 2025 Health Shark • Healthy Food • Happy Life
+  </div>
+
+</body>
+</html>
