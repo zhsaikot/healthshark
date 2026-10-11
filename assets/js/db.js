@@ -187,3 +187,4 @@ class HealthSharkDB {
 
 // Global DB instance
 window.hsDB = new HealthSharkDB();
+

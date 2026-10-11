@@ -19,12 +19,13 @@
  */
 
 const firebaseConfig = {
-  apiKey: "YOUR_FIREBASE_API_KEY",
-  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT_ID.appspot.com",
-  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyBVnn772269zI5QqHKOQCeOFNOVRn_dVz8",
+  authDomain: "health-shark.firebaseapp.com",
+  projectId: "health-shark",
+  storageBucket: "health-shark.firebasestorage.app",
+  messagingSenderId: "282353171783",
+  appId: "1:282353171783:web:3262a90cdffb87e982e062",
+  measurementId: "G-JMV9FF1R1Y"
 };
 
 // Check if actual configuration keys have been provided
@@ -44,6 +45,7 @@ let firebaseApp = null;
 let firestoreDb = null;
 let firebaseAuth = null;
 let firebaseStorage = null;
+let firebaseAnalytics = null;
 
 try {
   if (isFirebaseConfigured()) {
@@ -55,6 +57,11 @@ try {
     firestoreDb = firebase.firestore();
     firebaseAuth = firebase.auth();
     firebaseStorage = firebase.storage();
+    if (typeof firebase.analytics === "function" && firebaseConfig.measurementId) {
+      try {
+        firebaseAnalytics = firebase.analytics();
+      } catch (e) {}
+    }
     console.log("✅ Health Shark: Firebase connected successfully!");
   } else {
     console.info("ℹ️ Health Shark: Running in local fallback mode. Add your Firebase keys in assets/js/firebase-config.js to enable live cloud Firestore & Auth.");
@@ -70,5 +77,7 @@ window.HS_FIREBASE = {
   app: firebaseApp,
   db: firestoreDb,
   auth: firebaseAuth,
-  storage: firebaseStorage
+  storage: firebaseStorage,
+  analytics: firebaseAnalytics
 };
+

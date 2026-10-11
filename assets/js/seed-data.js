@@ -659,3 +659,4 @@ function getSeedItems() {
 if (typeof module !== "undefined" && module.exports) {
   module.exports = { SEED_CATEGORIES, SEED_MENU_ITEMS, getSeedCategories, getSeedItems };
 }
+
