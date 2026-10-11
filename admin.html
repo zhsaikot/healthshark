@@ -433,35 +433,116 @@
           ></textarea>
         </div>
 
-        <!-- Image Input: URL or File -->
-        <div class="space-y-2 border-t border-gray-100 pt-3">
-          <label class="block text-xs font-bold uppercase tracking-wider text-gray-600">Item Image</label>
+        <!-- ==================== 1. FEATURED / MAIN IMAGE ==================== -->
+        <div class="space-y-3 border-t border-gray-100 pt-4">
+          <div class="flex items-center justify-between">
+            <label class="block text-xs font-bold uppercase tracking-wider text-gray-800">
+              <i class="fa-solid fa-star text-amber-500 mr-1"></i> Main / Featured Image (প্রচ্ছদ ছবি) *
+            </label>
+            <span class="text-[11px] text-gray-500 font-medium">Used for menu listing, carousels & cover</span>
+          </div>
           
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 items-center">
             <div>
-              <span class="text-[11px] text-gray-500 block mb-1">Option A: Image Web URL</span>
+              <span class="text-[11px] text-gray-500 block mb-1 font-medium">Option A: Image Web URL</span>
               <input 
                 type="url" 
                 id="form-image-url" 
                 placeholder="https://images.unsplash.com/..." 
-                class="w-full px-3.5 py-2 rounded-xl border border-gray-300 text-xs outline-none focus:border-brand-700"
+                class="w-full px-3.5 py-2 rounded-xl border border-gray-300 text-xs outline-none focus:border-brand-700 bg-white"
               />
             </div>
 
             <div>
-              <span class="text-[11px] text-gray-500 block mb-1">Option B: Upload File (Storage)</span>
+              <span class="text-[11px] text-gray-500 block mb-1 font-medium">Option B: Upload File (Storage)</span>
               <input 
                 type="file" 
                 id="form-image-file" 
                 accept="image/*" 
-                class="w-full text-xs text-gray-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-emerald-50 file:text-brand-800 hover:file:bg-emerald-100"
+                class="w-full text-xs text-gray-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-emerald-50 file:text-brand-800 hover:file:bg-emerald-100 cursor-pointer"
               />
             </div>
           </div>
 
-          <!-- Preview -->
-          <div class="pt-2">
-            <img id="image-preview" src="" alt="Preview" class="hidden h-24 w-36 rounded-xl object-cover border border-gray-200 shadow-sm" />
+          <!-- Featured Image Preview -->
+          <div id="image-preview-wrapper" class="hidden pt-1">
+            <div class="inline-flex items-center gap-3 p-2 bg-gray-50 rounded-2xl border border-gray-200">
+              <div class="relative w-28 h-20 rounded-xl overflow-hidden bg-gray-100 shrink-0">
+                <img id="image-preview" src="" alt="Featured Preview" class="w-full h-full object-cover" />
+                <span class="absolute top-1 left-1 bg-brand-900/90 text-white text-[9px] font-bold px-1.5 py-0.5 rounded shadow">Main</span>
+              </div>
+              <div class="text-xs space-y-1 pr-2">
+                <div class="font-bold text-gray-800 text-xs">Featured Image Selected</div>
+                <p class="text-[11px] text-gray-500">This photo will appear first on all cards and details.</p>
+                <button 
+                  type="button" 
+                  id="remove-main-image-btn" 
+                  class="text-red-600 hover:text-red-800 text-[11px] font-semibold flex items-center gap-1 cursor-pointer"
+                >
+                  <i class="fa-solid fa-trash-can text-[10px]"></i> Remove Image
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ==================== 2. ADDITIONAL GALLERY IMAGES ==================== -->
+        <div class="space-y-3 border-t border-gray-100 pt-4">
+          <div class="flex items-center justify-between">
+            <label class="block text-xs font-bold uppercase tracking-wider text-gray-800">
+              <i class="fa-solid fa-images text-brand-700 mr-1"></i> Additional Gallery Images (আরো ছবি / গ্যালারি)
+            </label>
+            <span id="gallery-count-badge" class="text-[11px] text-brand-800 font-bold bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">
+              0 Extra Photos
+            </span>
+          </div>
+          <p class="text-[11px] text-gray-500">
+            Upload extra photos or add image links to showcase ingredients, packaging, or different serving angles.
+          </p>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 items-center">
+            <!-- Multi-file Upload -->
+            <div>
+              <span class="text-[11px] text-gray-500 block mb-1 font-medium">Select Multiple Image Files</span>
+              <input 
+                type="file" 
+                id="form-gallery-files" 
+                multiple 
+                accept="image/*" 
+                class="w-full text-xs text-gray-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-brand-50 file:text-brand-800 hover:file:bg-brand-100 cursor-pointer"
+              />
+            </div>
+
+            <!-- Add by URL -->
+            <div>
+              <span class="text-[11px] text-gray-500 block mb-1 font-medium">Or Add Image by Web URL</span>
+              <div class="flex items-center gap-2">
+                <input 
+                  type="url" 
+                  id="form-gallery-url-input" 
+                  placeholder="Paste image URL..." 
+                  class="flex-1 px-3 py-1.5 rounded-xl border border-gray-300 text-xs outline-none focus:border-brand-700 bg-white"
+                />
+                <button 
+                  type="button" 
+                  id="form-add-gallery-url-btn" 
+                  class="px-3.5 py-1.5 bg-brand-700 hover:bg-brand-800 text-white text-xs font-bold rounded-xl shrink-0 transition-colors shadow-sm cursor-pointer"
+                >
+                  <i class="fa-solid fa-plus mr-1"></i> Add
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Upload Status Spinner -->
+          <div id="gallery-upload-status" class="hidden text-xs text-brand-700 font-medium items-center gap-2 py-1">
+            <i class="fa-solid fa-circle-notch fa-spin"></i>
+            <span id="gallery-upload-text">Uploading gallery images...</span>
+          </div>
+
+          <!-- Gallery Preview Grid Container -->
+          <div id="gallery-preview-container" class="pt-1">
+            <!-- Dynamic thumbnails rendered by admin.js -->
           </div>
         </div>
 

@@ -55,6 +55,19 @@ document.addEventListener("DOMContentLoaded", () => {
   const formImageUrl = document.getElementById("form-image-url");
   const formImageFile = document.getElementById("form-image-file");
   const imagePreview = document.getElementById("image-preview");
+  const imagePreviewWrapper = document.getElementById("image-preview-wrapper");
+  const removeMainImageBtn = document.getElementById("remove-main-image-btn");
+
+  // Gallery Controls
+  const formGalleryFiles = document.getElementById("form-gallery-files");
+  const formGalleryUrlInput = document.getElementById("form-gallery-url-input");
+  const formAddGalleryUrlBtn = document.getElementById("form-add-gallery-url-btn");
+  const galleryCountBadge = document.getElementById("gallery-count-badge");
+  const galleryUploadStatus = document.getElementById("gallery-upload-status");
+  const galleryUploadText = document.getElementById("gallery-upload-text");
+  const galleryPreviewContainer = document.getElementById("gallery-preview-container");
+
+  let currentFormGallery = [];
 
   // Categories UI Elements
   const adminCategoriesGrid = document.getElementById("admin-categories-grid");
@@ -402,18 +415,34 @@ document.addEventListener("DOMContentLoaded", () => {
       if (formFeatures) formFeatures.value = item.features ? item.features.join("\n") : "";
       if (formImageUrl) formImageUrl.value = item.image || "";
       if (imagePreview) {
-        imagePreview.src = item.image;
-        imagePreview.classList.remove("hidden");
+        imagePreview.src = item.image || "";
+        if (item.image) {
+          imagePreview.classList.remove("hidden");
+          if (imagePreviewWrapper) imagePreviewWrapper.classList.remove("hidden");
+        } else {
+          imagePreview.classList.add("hidden");
+          if (imagePreviewWrapper) imagePreviewWrapper.classList.add("hidden");
+        }
       }
+
+      // Populate gallery (filter out exact duplicate of main image)
+      const rawGallery = Array.isArray(item.gallery) ? item.gallery : [];
+      currentFormGallery = rawGallery.filter((url) => url && url !== item.image);
+      renderGalleryPreview();
     } else {
       if (itemModalTitle) itemModalTitle.textContent = "Add New Food Dish";
       if (itemForm) itemForm.reset();
       if (formItemId) formItemId.value = "";
       if (formUnit) formUnit.value = "pc";
+      if (formImageUrl) formImageUrl.value = "";
       if (imagePreview) {
         imagePreview.src = "";
         imagePreview.classList.add("hidden");
       }
+      if (imagePreviewWrapper) imagePreviewWrapper.classList.add("hidden");
+
+      currentFormGallery = [];
+      renderGalleryPreview();
     }
   }
 
@@ -422,20 +451,35 @@ document.addEventListener("DOMContentLoaded", () => {
       itemModal.classList.add("hidden");
       itemModal.classList.remove("flex");
     }
+    currentFormGallery = [];
   }
 
-  // Dish Image URL live preview
+  // Dish Main Image URL live preview
   if (formImageUrl) {
     formImageUrl.addEventListener("input", (e) => {
       const url = e.target.value.trim();
       if (url && imagePreview) {
         imagePreview.src = url;
         imagePreview.classList.remove("hidden");
+        if (imagePreviewWrapper) imagePreviewWrapper.classList.remove("hidden");
+      } else if (!url) {
+        if (imagePreviewWrapper) imagePreviewWrapper.classList.add("hidden");
       }
     });
   }
 
-  // Dish File Upload to Firebase Storage
+  // Clear / Remove Main Image
+  if (removeMainImageBtn) {
+    removeMainImageBtn.addEventListener("click", () => {
+      if (formImageUrl) formImageUrl.value = "";
+      if (formImageFile) formImageFile.value = "";
+      if (imagePreview) imagePreview.src = "";
+      if (imagePreviewWrapper) imagePreviewWrapper.classList.add("hidden");
+      showToast("Featured image cleared", "info");
+    });
+  }
+
+  // Dish Main File Upload to Firebase Storage
   if (formImageFile) {
     formImageFile.addEventListener("change", async (e) => {
       const file = e.target.files[0];
@@ -446,23 +490,193 @@ document.addEventListener("DOMContentLoaded", () => {
         if (imagePreview) {
           imagePreview.src = loadEvent.target.result;
           imagePreview.classList.remove("hidden");
+          if (imagePreviewWrapper) imagePreviewWrapper.classList.remove("hidden");
         }
       };
       reader.readAsDataURL(file);
 
       if (window.HS_FIREBASE && window.HS_FIREBASE.isConfigured() && window.HS_FIREBASE.storage) {
         try {
-          showToast("Uploading image to Firebase Storage...", "info");
-          const storageRef = window.HS_FIREBASE.storage.ref(`menu_images/${Date.now()}_${file.name}`);
+          showToast("Uploading main image to Firebase Storage...", "info");
+          const storageRef = window.HS_FIREBASE.storage.ref(`menu_images/main_${Date.now()}_${file.name}`);
           const snapshot = await storageRef.put(file);
           const downloadUrl = await snapshot.ref.getDownloadURL();
           if (formImageUrl) formImageUrl.value = downloadUrl;
-          showToast("Image uploaded to Firebase Storage!", "success");
+          showToast("Main image uploaded to Firebase Storage!", "success");
         } catch (err) {
           console.warn("Storage upload error:", err);
           showToast("Image stored as local preview.", "info");
         }
       }
+    });
+  }
+
+  /* ==========================================================================
+     ADDITIONAL GALLERY IMAGES LOGIC
+     ========================================================================== */
+
+  function renderGalleryPreview() {
+    if (galleryCountBadge) {
+      galleryCountBadge.textContent = `${currentFormGallery.length} Extra Photos`;
+    }
+
+    if (!galleryPreviewContainer) return;
+
+    if (currentFormGallery.length === 0) {
+      galleryPreviewContainer.innerHTML = `
+        <div class="p-4 border-2 border-dashed border-gray-200 rounded-2xl text-center text-gray-400 text-xs py-5">
+          <i class="fa-solid fa-photo-film text-xl mb-1 text-gray-300 block"></i>
+          <span>No extra gallery images added yet. Upload files or paste image URLs above.</span>
+        </div>
+      `;
+      return;
+    }
+
+    galleryPreviewContainer.innerHTML = `
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        ${currentFormGallery
+          .map(
+            (imgUrl, idx) => `
+          <div class="relative group rounded-xl overflow-hidden border border-gray-200 bg-gray-100 shadow-sm h-24">
+            <img 
+              src="${imgUrl}" 
+              alt="Gallery photo ${idx + 1}" 
+              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+              onerror="this.src='assets/images/logo.png'"
+            />
+            <!-- Delete Button -->
+            <button 
+              type="button" 
+              onclick="removeAdminGalleryImage(${idx})" 
+              class="absolute top-1.5 right-1.5 w-6 h-6 rounded-full bg-red-600 hover:bg-red-700 text-white flex items-center justify-center shadow transition-all cursor-pointer"
+              title="Remove this photo"
+            >
+              <i class="fa-solid fa-xmark text-xs"></i>
+            </button>
+            <!-- Set as Main Button -->
+            <button 
+              type="button" 
+              onclick="setAsMainFeaturedImage(${idx})" 
+              class="absolute bottom-1.5 left-1.5 right-1.5 py-1 px-1.5 rounded-lg bg-black/75 hover:bg-brand-800 text-[10px] font-bold text-white text-center backdrop-blur-sm transition-all cursor-pointer opacity-90 hover:opacity-100"
+              title="Make this photo the main featured cover image"
+            >
+              <i class="fa-solid fa-star text-[9px] text-amber-400 mr-0.5"></i> Set as Main
+            </button>
+          </div>
+        `
+          )
+          .join("")}
+      </div>
+    `;
+  }
+
+  // Global functions for inline onclick handlers
+  window.removeAdminGalleryImage = function (index) {
+    if (index >= 0 && index < currentFormGallery.length) {
+      currentFormGallery.splice(index, 1);
+      renderGalleryPreview();
+      showToast("Gallery image removed", "info");
+    }
+  };
+
+  window.setAsMainFeaturedImage = function (index) {
+    if (index >= 0 && index < currentFormGallery.length) {
+      const selectedImg = currentFormGallery[index];
+      const oldMain = formImageUrl ? formImageUrl.value.trim() : "";
+
+      if (formImageUrl) formImageUrl.value = selectedImg;
+      if (imagePreview) {
+        imagePreview.src = selectedImg;
+        imagePreview.classList.remove("hidden");
+        if (imagePreviewWrapper) imagePreviewWrapper.classList.remove("hidden");
+      }
+
+      if (oldMain && oldMain !== selectedImg) {
+        currentFormGallery[index] = oldMain;
+      } else {
+        currentFormGallery.splice(index, 1);
+      }
+
+      renderGalleryPreview();
+      showToast("Updated main featured image!", "success");
+    }
+  };
+
+  // Gallery: Add Image by URL
+  if (formAddGalleryUrlBtn && formGalleryUrlInput) {
+    const handleAddGalleryUrl = () => {
+      const url = formGalleryUrlInput.value.trim();
+      if (!url) {
+        showToast("Please enter an image URL", "warning");
+        return;
+      }
+      currentFormGallery.push(url);
+      formGalleryUrlInput.value = "";
+      renderGalleryPreview();
+      showToast("Added image to gallery!", "success");
+    };
+
+    formAddGalleryUrlBtn.addEventListener("click", handleAddGalleryUrl);
+    formGalleryUrlInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        handleAddGalleryUrl();
+      }
+    });
+  }
+
+  // Gallery: Multi-file Upload
+  if (formGalleryFiles) {
+    formGalleryFiles.addEventListener("change", async (e) => {
+      const files = Array.from(e.target.files);
+      if (!files || files.length === 0) return;
+
+      if (galleryUploadStatus) {
+        galleryUploadStatus.classList.remove("hidden");
+        galleryUploadStatus.classList.add("flex");
+        if (galleryUploadText) galleryUploadText.textContent = `Processing ${files.length} images...`;
+      }
+
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        if (galleryUploadText) {
+          galleryUploadText.textContent = `Uploading image ${i + 1} of ${files.length}...`;
+        }
+
+        if (window.HS_FIREBASE && window.HS_FIREBASE.isConfigured() && window.HS_FIREBASE.storage) {
+          try {
+            const storageRef = window.HS_FIREBASE.storage.ref(`menu_images/gallery_${Date.now()}_${file.name}`);
+            const snapshot = await storageRef.put(file);
+            const downloadUrl = await snapshot.ref.getDownloadURL();
+            currentFormGallery.push(downloadUrl);
+          } catch (err) {
+            console.warn("Storage upload error for gallery:", err);
+            const dataUrl = await readFileAsDataUrl(file);
+            currentFormGallery.push(dataUrl);
+          }
+        } else {
+          // Local demo preview
+          const dataUrl = await readFileAsDataUrl(file);
+          currentFormGallery.push(dataUrl);
+        }
+      }
+
+      if (galleryUploadStatus) {
+        galleryUploadStatus.classList.add("hidden");
+        galleryUploadStatus.classList.remove("flex");
+      }
+
+      formGalleryFiles.value = "";
+      renderGalleryPreview();
+      showToast(`Added ${files.length} photos to gallery!`, "success");
+    });
+  }
+
+  function readFileAsDataUrl(file) {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = (e) => resolve(e.target.result);
+      reader.readAsDataURL(file);
     });
   }
 
@@ -493,6 +707,12 @@ document.addEventListener("DOMContentLoaded", () => {
       const matchedCat = allAdminCategories.find((c) => c.id === category);
       const catName = matchedCat ? matchedCat.name : category;
 
+      // Final gallery contains main image as first, followed by extra gallery photos
+      const finalGallery = [
+        imageUrl,
+        ...currentFormGallery.filter((u) => u && u !== imageUrl)
+      ];
+
       const itemPayload = {
         name: title,
         category: category,
@@ -504,6 +724,7 @@ document.addEventListener("DOMContentLoaded", () => {
         description: description,
         features: features,
         image: imageUrl,
+        gallery: finalGallery,
         rating: 4.9,
         reviewsCount: 20
       };
@@ -523,7 +744,7 @@ document.addEventListener("DOMContentLoaded", () => {
         await loadDashboardData();
       } catch (err) {
         console.error("Save error:", err);
-        showToast("Error saving item: " + err.message, "error");
+        showToast("Error saving dish: " + err.message, "error");
       }
     });
   }

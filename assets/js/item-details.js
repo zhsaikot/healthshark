@@ -85,36 +85,52 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Gallery thumbnails
     if (imageGallery) {
-      const images = item.gallery && item.gallery.length > 0 ? item.gallery : [item.image];
-      if (images.length === 1) {
-        images.push(item.image);
-      }
+      // Gather all unique valid image URLs, prioritizing main image first
+      const rawList = [item.image, ...(Array.isArray(item.gallery) ? item.gallery : [])];
+      const uniqueImages = Array.from(new Set(rawList.filter(Boolean)));
 
-      imageGallery.innerHTML = images
-        .map(
-          (imgUrl, idx) => `
-          <button 
-            type="button" 
-            class="gallery-thumb-btn w-20 h-20 rounded-xl overflow-hidden border-2 ${idx === 0 ? "border-emerald-700 ring-2 ring-emerald-200" : "border-gray-200 opacity-70 hover:opacity-100"} transition-all"
-            data-img="${imgUrl}"
-          >
-            <img src="${imgUrl}" alt="${item.name} thumbnail" class="w-full h-full object-cover" />
-          </button>
-        `
-        )
-        .join("");
+      if (uniqueImages.length > 1) {
+        imageGallery.classList.remove("hidden");
+        imageGallery.innerHTML = uniqueImages
+          .map(
+            (imgUrl, idx) => `
+            <button 
+              type="button" 
+              class="gallery-thumb-btn w-20 h-20 rounded-2xl overflow-hidden border-2 cursor-pointer ${idx === 0 ? "border-brand-700 ring-2 ring-emerald-300" : "border-gray-200 opacity-70 hover:opacity-100 hover:border-brand-300"} transition-all shrink-0 bg-gray-100 shadow-sm"
+              data-img="${imgUrl}"
+              title="View image ${idx + 1}"
+            >
+              <img src="${imgUrl}" alt="${item.name} photo ${idx + 1}" class="w-full h-full object-cover" onerror="this.src='assets/images/logo.png'" />
+            </button>
+          `
+          )
+          .join("");
 
-      // Gallery click events
-      const thumbBtns = imageGallery.querySelectorAll(".gallery-thumb-btn");
-      thumbBtns.forEach((btn) => {
-        btn.addEventListener("click", () => {
-          thumbBtns.forEach((b) => b.classList.remove("border-emerald-700", "ring-2", "ring-emerald-200", "opacity-100"));
-          thumbBtns.forEach((b) => b.classList.add("border-gray-200", "opacity-70"));
-          btn.classList.add("border-emerald-700", "ring-2", "ring-emerald-200", "opacity-100");
-          btn.classList.remove("border-gray-200", "opacity-70");
-          if (mainImage) mainImage.src = btn.getAttribute("data-img");
+        // Gallery click events with smooth transition
+        const thumbBtns = imageGallery.querySelectorAll(".gallery-thumb-btn");
+        thumbBtns.forEach((btn) => {
+          btn.addEventListener("click", () => {
+            thumbBtns.forEach((b) => {
+              b.classList.remove("border-brand-700", "ring-2", "ring-emerald-300");
+              b.classList.add("border-gray-200", "opacity-70");
+            });
+            btn.classList.add("border-brand-700", "ring-2", "ring-emerald-300");
+            btn.classList.remove("border-gray-200", "opacity-70");
+
+            if (mainImage) {
+              mainImage.classList.add("opacity-40");
+              setTimeout(() => {
+                mainImage.src = btn.getAttribute("data-img");
+                mainImage.classList.remove("opacity-40");
+              }, 120);
+            }
+          });
         });
-      });
+      } else {
+        // Only 1 photo available, hide gallery bar for cleaner layout
+        imageGallery.innerHTML = "";
+        imageGallery.classList.add("hidden");
+      }
     }
 
     // Key Features list
